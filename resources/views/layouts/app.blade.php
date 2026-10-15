@@ -42,6 +42,7 @@
         $allApps = collect($user->apps());
         $adminApp = $allApps->first(fn ($a) => str_starts_with($a['route'], 'admin.'));
         $miniApps = $allApps->reject(fn ($a) => str_starts_with($a['route'], 'admin.'))->values();
+        $unreadNotifications = request()->routeIs('notifications.*') ? 0 : \App\Models\Announcement::unreadFor($user);
     @endphp
     @include('partials.cloud-defs')
 
@@ -72,6 +73,13 @@
             <p class="nav-heading">Menu</p>
             <a href="{{ route('dashboard') }}" title="Dashboard" class="nav-link {{ request()->routeIs('dashboard') ? 'nav-link-active' : '' }}">
                 <span class="nav-icon"><x-icon name="home" /></span> <span class="nav-label">Dashboard</span>
+            </a>
+
+            <a href="{{ route('notifications.index') }}" title="Notifications" class="nav-link {{ request()->routeIs('notifications.*') ? 'nav-link-active' : '' }}">
+                <span class="nav-icon"><x-icon name="bell" /></span> <span class="nav-label">Notifications</span>
+                @if ($unreadNotifications > 0)
+                    <span class="nav-label ml-auto rounded-full bg-rose-500 px-2 py-0.5 text-[11px] font-extrabold text-white">{{ $unreadNotifications > 99 ? '99+' : $unreadNotifications }}</span>
+                @endif
             </a>
 
             @if ($miniApps->isNotEmpty())

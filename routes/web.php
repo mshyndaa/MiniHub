@@ -10,8 +10,10 @@ use App\Http\Controllers\MediaController;
 use App\Http\Controllers\NoteAttachmentController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\NoteFolderController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SharedNoteController;
+use App\Http\Controllers\SpinController;
 use App\Http\Controllers\StockController;
 use Illuminate\Support\Facades\Route;
 
@@ -35,6 +37,9 @@ Route::middleware(['auth', 'active'])->group(function () {
     Route::middleware('password.changed')->group(function () {
         Route::get('/', DashboardController::class)->name('dashboard');
         Route::get('/profile', ProfileController::class)->name('profile');
+        Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+        Route::post('/notifications', [NotificationController::class, 'store'])->middleware('role:admin')->name('notifications.store');
+        Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])->middleware('role:admin')->name('notifications.destroy');
         Route::get('/media/{user}/{kind}', [MediaController::class, 'show'])->name('media');
         Route::post('/profile/{kind}', [MediaController::class, 'update'])->whereIn('kind', ['avatar', 'banner'])->name('profile.media.update');
         Route::delete('/profile/{kind}', [MediaController::class, 'destroy'])->whereIn('kind', ['avatar', 'banner'])->name('profile.media.destroy');
@@ -65,6 +70,13 @@ Route::middleware(['auth', 'active'])->group(function () {
             Route::post('/', [StockController::class, 'store'])->name('store');
             Route::put('/{id}', [StockController::class, 'update'])->name('update');
             Route::delete('/{id}', [StockController::class, 'destroy'])->name('destroy');
+        });
+
+        Route::middleware('role:spin')->prefix('spin')->name('spin.')->group(function () {
+            Route::get('/', [SpinController::class, 'index'])->name('index');
+            Route::get('/tv', [SpinController::class, 'tv'])->name('tv');
+            Route::get('/state', [SpinController::class, 'state'])->name('state');
+            Route::post('/state', [SpinController::class, 'push'])->name('push');
         });
 
         Route::middleware('role:notes')->prefix('notes')->name('notes.')->group(function () {

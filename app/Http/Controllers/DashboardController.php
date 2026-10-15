@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Announcement;
 use App\Models\Note;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -21,6 +22,11 @@ class DashboardController extends Controller
             $stats['admin'] = ['n' => User::count(), 'label' => 'users'];
         }
 
-        return view('dashboard', ['apps' => $user->apps(), 'stats' => $stats]);
+        return view('dashboard', [
+            'apps' => $user->apps(),
+            'stats' => $stats,
+            'announcements' => Announcement::with('author:id,name')->latest('id')->limit(5)->get(),
+            'announcementsSince' => $user->notifications_read_at ?? $user->created_at,
+        ]);
     }
 }

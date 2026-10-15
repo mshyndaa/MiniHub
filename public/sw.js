@@ -1,7 +1,7 @@
 // CJ Hub service worker.
 // Pages are always fetched from the network (they are per-user and carry CSRF tokens);
 // only static assets are cached, plus an offline fallback for failed navigations.
-const VERSION = 'v1';
+const VERSION = 'v2';
 const STATIC_CACHE = `cjhub-static-${VERSION}`;
 const PRECACHE = ['/offline.html', '/icons/icon-192.png', '/icons/icon-512.png', '/favicon.svg'];
 
