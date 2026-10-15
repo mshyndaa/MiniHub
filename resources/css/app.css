@@ -1,0 +1,74 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+/* Dark mode is toggled by a `dark` class on <html> (see layouts/app.blade.php). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --font-sans: 'Nunito', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji';
+}
+
+@layer base {
+    body {
+        @apply min-h-screen bg-gradient-to-br from-sky-100 via-pink-50 to-yellow-100 text-slate-700 antialiased;
+        background-attachment: fixed;
+    }
+    .dark body {
+        @apply from-slate-900 via-indigo-950 to-slate-900 text-slate-200;
+    }
+}
+
+@layer components {
+    .card {
+        @apply rounded-3xl border border-white/70 bg-white/80 p-5 shadow-lg shadow-sky-200/40 backdrop-blur;
+    }
+    .dark .card {
+        @apply border-white/10 bg-slate-800/70 shadow-black/20;
+    }
+
+    .input {
+        @apply w-full rounded-2xl border-2 border-sky-100 bg-white px-4 py-2.5 text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-pink-300 focus:ring-4 focus:ring-pink-200/50;
+    }
+    .dark .input {
+        @apply border-slate-600 bg-slate-900 text-slate-100 focus:border-pink-400 focus:ring-pink-400/20;
+    }
+
+    .btn {
+        @apply inline-flex items-center justify-center gap-1 rounded-2xl px-4 py-2.5 text-sm font-bold text-white shadow transition hover:-translate-y-0.5 hover:shadow-md active:translate-y-0;
+    }
+    .btn-blue {
+        @apply bg-gradient-to-r from-sky-400 to-blue-500;
+    }
+    .btn-pink {
+        @apply bg-gradient-to-r from-pink-400 to-rose-400;
+    }
+    .btn-yellow {
+        @apply bg-gradient-to-r from-yellow-300 to-amber-400 text-amber-950;
+    }
+    .btn-soft {
+        @apply bg-white text-slate-600 ring-1 ring-slate-200 hover:bg-slate-50;
+    }
+    .dark .btn-soft {
+        @apply bg-slate-700 text-slate-100 ring-slate-600 hover:bg-slate-600;
+    }
+
+    .label {
+        @apply mb-1 block text-sm font-bold text-slate-600;
+    }
+    .dark .label {
+        @apply text-slate-300;
+    }
+    .error {
+        @apply mt-1 text-sm font-semibold text-rose-500;
+    }
+    .alert-ok {
+        @apply rounded-2xl bg-emerald-100 px-4 py-3 text-sm font-semibold text-emerald-800;
+    }
+    .dark .alert-ok {
+        @apply bg-emerald-900/40 text-emerald-200;
+    }
+}
