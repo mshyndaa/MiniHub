@@ -32,7 +32,7 @@
         @csrf
         <div class="stock-row" style="flex-wrap:wrap">
             <input name="icon" value="{{ old('icon') }}" maxlength="16" placeholder="😀" class="input" style="width:5rem;text-align:center" aria-label="Emoji">
-            <input name="name" value="{{ old('name') }}" required maxlength="50" placeholder="Item name (e.g. Tea)" class="input" style="flex:1 1 12rem" aria-label="Name">
+            <input name="name" value="{{ old('name') }}" maxlength="50" placeholder="Item name (e.g. Tea)" class="input" style="flex:1 1 12rem" aria-label="Name">
             <input type="number" name="stock" min="0" required value="{{ old('stock', 100) }}" class="input" style="width:8rem" aria-label="Starting stock">
             <button class="btn btn-blue"><x-icon name="plus" class="h-4 w-4" /> Add item</button>
         </div>
@@ -43,7 +43,7 @@
     @foreach ($items as $item)
         <div class="card text-center" data-item="{{ $item['id'] }}">
             <div class="stock-emoji">{{ $item['icon'] ?: '📦' }}</div>
-            <h2 class="mt-2 text-xl font-extrabold">{{ $item['name'] }}</h2>
+            <h2 class="mt-2 text-xl font-extrabold">{{ $item['name'] !== '' ? $item['name'] : 'Item #'.$item['id'] }}</h2>
             <p class="stock-count" data-count>{{ $item['stock'] }}</p>
             <button type="button" data-delta="-1" class="btn btn-blue w-full text-xl" style="padding-block:1.1rem">Scanned · −1</button>
             <button type="button" data-delta="1" class="mt-2 text-sm font-semibold opacity-60 hover:opacity-100">Undo (+1)</button>
@@ -54,7 +54,7 @@
                     @csrf @method('PUT')
                     <div class="stock-row">
                         <input name="icon" value="{{ $item['icon'] }}" maxlength="16" class="input" style="width:4.5rem;text-align:center" aria-label="Emoji">
-                        <input name="name" value="{{ $item['name'] }}" required maxlength="50" class="input" style="flex:1" aria-label="Name">
+                        <input name="name" value="{{ $item['name'] }}" maxlength="50" class="input" style="flex:1" aria-label="Name">
                     </div>
                     <div class="stock-row">
                         <input type="number" name="stock" min="0" required value="{{ $item['stock'] }}" class="input" style="flex:1" aria-label="Stock">

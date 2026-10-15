@@ -17,7 +17,67 @@ class StockController extends Controller
     /** Full-screen display for the TV. */
     public function tv()
     {
-        return view('stock.tv', ['items' => $this->items()]);
+        $user = auth()->user();
+
+        return view('stock.tv', [
+            'items' => $this->items(),
+            'background' => $user->tvBackgroundUrl(),
+            'layout' => $user->tv_layout,
+            'style' => $user->tv_style,
+        ]);
+    }
+
+    /** Save this user's tile positions/sizes (percent of the grid area), keyed by item id. */
+    public function saveLayout(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'layout' => ['required', 'array', 'max:100'],
+            'layout.*.x' => ['required', 'numeric', 'between:0,100'],
+            'layout.*.y' => ['required', 'numeric', 'between:0,100'],
+            'layout.*.w' => ['required', 'numeric', 'between:5,100'],
+            'layout.*.h' => ['required', 'numeric', 'between:5,100'],
+        ]);
+
+        $layout = [];
+        foreach ($data['layout'] as $id => $box) {
+            $layout[(int) $id] = array_map('floatval', array_intersect_key($box, array_flip(['x', 'y', 'w', 'h'])));
+        }
+        $request->user()->update(['tv_layout' => $layout]);
+
+        return response()->json(['ok' => true]);
+    }
+
+    /** Save this user's tile look: text colour, tile colour and tile opacity (0-100). */
+    public function saveStyle(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'text' => ['nullable', 'regex:/^#[0-9a-fA-F]{6}$/'],
+            'tile' => ['nullable', 'regex:/^#[0-9a-fA-F]{6}$/'],
+            'opacity' => ['nullable', 'integer', 'between:0,100'],
+            'overlay' => ['nullable', 'boolean'],
+        ]);
+        $request->user()->update(['tv_style' => [
+            'text' => $data['text'] ?? null,
+            'tile' => $data['tile'] ?? null,
+            'opacity' => $data['opacity'] ?? null,
+            'overlay' => $data['overlay'] ?? true,
+        ]]);
+
+        return response()->json(['ok' => true]);
+    }
+
+    public function resetStyle(Request $request): JsonResponse
+    {
+        $request->user()->update(['tv_style' => null]);
+
+        return response()->json(['ok' => true]);
+    }
+
+    public function resetLayout(Request $request): JsonResponse
+    {
+        $request->user()->update(['tv_layout' => null]);
+
+        return response()->json(['ok' => true]);
     }
 
     /** Live numbers, polled by the TV and the Customer Service screen. */
@@ -64,11 +124,14 @@ class StockController extends Controller
 
     private function validated(Request $request): array
     {
-        return $request->validate([
-            'name' => ['required', 'string', 'max:50'],
+        $data = $request->validate([
+            'name' => ['nullable', 'string', 'max:50'],
             'icon' => ['nullable', 'string', 'max:16'],
             'stock' => ['required', 'integer', 'min:0', 'max:1000000'],
         ]);
+        $data['name'] ??= '';
+
+        return $data;
     }
 
     private function items(): array

@@ -16,16 +16,48 @@
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}?v={{ filemtime(public_path('favicon.svg')) }}">
     <script>
         // Apply saved theme / sidebar state before first paint.
+        // Theme mode is 'light', 'dark', or 'system' (nothing stored: follow the OS live).
         (function () {
-            var t = null, s = null;
+            var root = document.documentElement, t = null, s = null;
             try { t = localStorage.getItem('theme'); s = localStorage.getItem('sidebar'); } catch (e) {}
-            if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.classList.add('dark');
-                document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0f15');
+            if (t !== 'light' && t !== 'dark') t = null;
+            var mq = window.matchMedia('(prefers-color-scheme: dark)');
+            function apply() {
+                var dark = t ? t === 'dark' : mq.matches;
+                root.classList.toggle('dark', dark);
+                var m = document.querySelector('meta[name="theme-color"]');
+                if (m) m.setAttribute('content', dark ? '#0d0f15' : '#f1f5f9');
             }
-            if (s === 'collapsed') document.documentElement.classList.add('sidebar-collapsed');
+            window.cjTheme = {
+                mode: function () { return t || 'system'; },
+                isDark: function () { return root.classList.contains('dark'); },
+                set: function (mode) {
+                    t = mode === 'light' || mode === 'dark' ? mode : null;
+                    try { t ? localStorage.setItem('theme', t) : localStorage.removeItem('theme'); } catch (e) {}
+                    apply();
+                    document.dispatchEvent(new CustomEvent('themechange'));
+                }
+            };
+            if (mq.addEventListener) mq.addEventListener('change', function () { if (!t) { apply(); document.dispatchEvent(new CustomEvent('themechange')); } });
+            apply();
+            if (s === 'collapsed') root.classList.add('sidebar-collapsed');
         })();
     </script>
+    @auth
+    <script>
+        // App lock: when enabled on this device, stay locked until a biometric check passes (see resources/js/applock.js).
+        (function () {
+            var key = window.cjAppLockKey = 'applock:{{ auth()->id() }}', on = false, ok = false;
+            try { on = !!localStorage.getItem(key); ok = sessionStorage.getItem('applock-ok') === '1'; } catch (e) {}
+            if (on && !ok) document.documentElement.classList.add('app-locked');
+        })();
+    </script>
+    @else
+    <script>
+        // Signing in with a password counts as unlocking.
+        try { sessionStorage.setItem('applock-ok', '1'); } catch (e) {}
+    </script>
+    @endauth
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=nunito:400,600,700,800" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -46,6 +78,20 @@
         $unreadNotifications = request()->routeIs('notifications.*') ? 0 : \App\Models\Announcement::unreadFor($user);
     @endphp
     @include('partials.cloud-defs')
+
+    {{-- App lock screen: shown while html.app-locked is set --}}
+    <div id="applock" class="applock" role="dialog" aria-modal="true" aria-label="App locked">
+        <div class="applock-box">
+            <span class="applock-icon"><x-icon name="fingerprint" class="h-10 w-10" /></span>
+            <h2 class="text-xl font-extrabold">{{ config('app.name') }} is locked</h2>
+            <p class="text-sm opacity-70" data-applock-msg>Verify it's you to continue.</p>
+            <button type="button" class="btn btn-blue w-full" data-applock-unlock><x-icon name="fingerprint" class="h-4 w-4" /> Unlock</button>
+            <form method="POST" action="{{ route('logout') }}" class="w-full">
+                @csrf
+                <button class="btn btn-soft w-full">Log out instead</button>
+            </form>
+        </div>
+    </div>
 
     {{-- Mobile top bar --}}
     <div class="topbar lg:hidden">

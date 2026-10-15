@@ -21,6 +21,9 @@ class User extends Authenticatable
         'must_change_password',
         'avatar_path',
         'banner_path',
+        'tv_bg_path',
+        'tv_layout',
+        'tv_style',
     ];
 
     protected $attributes = [
@@ -39,6 +42,8 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
+            'tv_layout' => 'array',
+            'tv_style' => 'array',
             'must_change_password' => 'boolean',
         ];
     }
@@ -51,6 +56,11 @@ class User extends Authenticatable
     public function bannerUrl(): ?string
     {
         return $this->banner_path ? route("media", [$this, "banner", "v" => $this->updated_at?->timestamp]) : null;
+    }
+
+    public function tvBackgroundUrl(): ?string
+    {
+        return $this->tv_bg_path ? route("media", [$this, "tvbg", "v" => $this->updated_at?->timestamp]) : null;
     }
 
     public function roles(): HasMany

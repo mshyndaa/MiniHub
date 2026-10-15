@@ -101,6 +101,30 @@
         </div>
     </section>
 
+    {{-- Preferences: appearance + app lock --}}
+    <section class="card order-last lg:col-span-5">
+        <div class="grid gap-8 md:grid-cols-2">
+            <div>
+                <h2 class="mb-1 flex items-center gap-2 text-lg font-extrabold"><x-icon name="palette" class="h-5 w-5 text-sky-500" /> Appearance</h2>
+                <p class="mb-4 text-sm opacity-70">System follows your device and switches automatically.</p>
+                <div class="seg" role="group" aria-label="Theme">
+                    <button type="button" class="seg-btn" data-theme-set="light"><x-icon name="sun" class="h-4 w-4" /> Light</button>
+                    <button type="button" class="seg-btn" data-theme-set="dark"><x-icon name="moon" class="h-4 w-4" /> Dark</button>
+                    <button type="button" class="seg-btn" data-theme-set="system"><x-icon name="monitor" class="h-4 w-4" /> System</button>
+                </div>
+            </div>
+
+            <div data-applock-panel data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}">
+                <h2 class="mb-1 flex items-center gap-2 text-lg font-extrabold"><x-icon name="fingerprint" class="h-5 w-5 text-sky-500" /> Biometric lock</h2>
+                <p class="mb-1 text-sm opacity-70">Ask for your fingerprint, face or device PIN to open the app. It locks the moment you leave it. This applies to this device only.</p>
+                <p class="mb-4 text-sm font-bold" data-applock-status>Checking…</p>
+                <button type="button" class="btn btn-blue hidden" data-applock-enable><x-icon name="fingerprint" class="h-4 w-4" /> Turn on biometric lock</button>
+                <button type="button" class="btn btn-soft hidden" data-applock-disable>Turn off</button>
+                <p class="hidden text-sm opacity-70" data-applock-note>This device or browser doesn't support biometric unlock (it needs HTTPS and a fingerprint, face or PIN set up on the device).</p>
+            </div>
+        </div>
+    </section>
+
     {{-- Security --}}
     <section class="card flex flex-col lg:col-span-3">
         <div class="flex items-start gap-3">

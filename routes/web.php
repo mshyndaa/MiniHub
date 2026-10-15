@@ -66,6 +66,12 @@ Route::middleware(['auth', 'active'])->group(function () {
             Route::get('/', [StockController::class, 'index'])->name('index');
             Route::get('/tv', [StockController::class, 'tv'])->name('tv');
             Route::get('/data', [StockController::class, 'data'])->name('data');
+            Route::put('/style', [StockController::class, 'saveStyle'])->name('style.save');
+            Route::delete('/style', [StockController::class, 'resetStyle'])->name('style.reset');
+            Route::put('/layout', [StockController::class, 'saveLayout'])->name('layout.save');
+            Route::delete('/layout', [StockController::class, 'resetLayout'])->name('layout.reset');
+            Route::post('/background', [MediaController::class, 'update'])->defaults('kind', 'tvbg')->name('background.update');
+            Route::delete('/background', [MediaController::class, 'destroy'])->defaults('kind', 'tvbg')->name('background.destroy');
             Route::post('/{id}/adjust', [StockController::class, 'adjust'])->name('adjust');
             Route::post('/', [StockController::class, 'store'])->name('store');
             Route::put('/{id}', [StockController::class, 'update'])->name('update');

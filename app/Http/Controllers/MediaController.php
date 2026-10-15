@@ -13,7 +13,7 @@ use Illuminate\Validation\Rule;
  */
 class MediaController extends Controller
 {
-    private const KINDS = ['avatar' => 'avatar_path', 'banner' => 'banner_path'];
+    private const KINDS = ['avatar' => 'avatar_path', 'banner' => 'banner_path', 'tvbg' => 'tv_bg_path'];
 
     public function show(User $user, string $kind)
     {
@@ -45,6 +45,10 @@ class MediaController extends Controller
         }
         $user->update([$column => $request->file('image')->store("profile/{$kind}s", 'local')]);
 
+        if ($request->expectsJson()) {
+            return response()->json(['url' => $user->tvBackgroundUrl()]);
+        }
+
         return back()->with('status', ucfirst($kind) === 'Avatar' ? 'Profile photo updated.' : 'Banner updated.');
     }
 
@@ -58,6 +62,10 @@ class MediaController extends Controller
         if ($user->$column) {
             Storage::disk('local')->delete($user->$column);
             $user->update([$column => null]);
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json(['url' => null]);
         }
 
         return back()->with('status', ucfirst($kind) === 'Avatar' ? 'Profile photo removed.' : 'Banner removed.');

@@ -1,20 +1,25 @@
 import './bootstrap';
 import './notes';
+import './applock';
 
-// Light / dark toggle. The initial class is set by an inline script in the
-// layout <head> (to avoid a flash); this just handles clicks.
+// Theme. window.cjTheme (inline in the layout <head>, to avoid a flash) owns the state:
+// 'light', 'dark' or 'system'. The quick toggle flips light/dark; the profile page has all three.
 document.querySelectorAll('[data-theme-toggle]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-        const dark = document.documentElement.classList.toggle('dark');
-        // Keep the phone's status bar in step with the in-app theme, not the OS setting.
-        document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#0d0f15' : '#f1f5f9');
-        try {
-            localStorage.setItem('theme', dark ? 'dark' : 'light');
-        } catch (e) {
-            // storage may be unavailable (private mode); the toggle still works for this page
-        }
-    });
+    btn.addEventListener('click', () => window.cjTheme.set(window.cjTheme.isDark() ? 'light' : 'dark'));
 });
+
+const themeButtons = document.querySelectorAll('[data-theme-set]');
+const syncThemeButtons = () => {
+    const mode = window.cjTheme.mode();
+    themeButtons.forEach((b) => {
+        const active = b.dataset.themeSet === mode;
+        b.setAttribute('aria-pressed', active ? 'true' : 'false');
+        b.classList.toggle('seg-active', active);
+    });
+};
+themeButtons.forEach((b) => b.addEventListener('click', () => window.cjTheme.set(b.dataset.themeSet)));
+document.addEventListener('themechange', syncThemeButtons);
+syncThemeButtons();
 
 // The server runs in UTC; show the greeting and date for the viewer's own clock.
 const localGreeting = document.querySelector('[data-local-greeting]');
