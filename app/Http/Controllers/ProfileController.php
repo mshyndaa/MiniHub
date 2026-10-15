@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Note;
-use App\Models\Todo;
 use Illuminate\Http\Request;
 
 class ProfileController extends Controller

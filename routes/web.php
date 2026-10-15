@@ -12,7 +12,7 @@ use App\Http\Controllers\NoteController;
 use App\Http\Controllers\NoteFolderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SharedNoteController;
-use App\Http\Controllers\TodoController;
+use App\Http\Controllers\StockController;
 use Illuminate\Support\Facades\Route;
 
 Route::pattern('id', '[0-9]+');
@@ -57,6 +57,16 @@ Route::middleware(['auth', 'active'])->group(function () {
             Route::delete('/menus/{menu}', [MenuController::class, 'destroy'])->name('menus.destroy');
         });
 
+        Route::middleware('role:stock')->prefix('stock')->name('stock.')->group(function () {
+            Route::get('/', [StockController::class, 'index'])->name('index');
+            Route::get('/tv', [StockController::class, 'tv'])->name('tv');
+            Route::get('/data', [StockController::class, 'data'])->name('data');
+            Route::post('/{id}/adjust', [StockController::class, 'adjust'])->name('adjust');
+            Route::post('/', [StockController::class, 'store'])->name('store');
+            Route::put('/{id}', [StockController::class, 'update'])->name('update');
+            Route::delete('/{id}', [StockController::class, 'destroy'])->name('destroy');
+        });
+
         Route::middleware('role:notes')->prefix('notes')->name('notes.')->group(function () {
             Route::get('/', [NoteController::class, 'index'])->name('index');
             Route::post('/', [NoteController::class, 'store'])->name('store');
@@ -75,7 +85,6 @@ Route::middleware(['auth', 'active'])->group(function () {
             Route::delete('/{id}/force', [NoteController::class, 'forceDelete'])->name('force');
             Route::get('/{id}/export/{format}', [NoteController::class, 'export'])->name('export');
             Route::post('/{id}/share', [NoteController::class, 'share'])->name('share');
-            Route::post('/{id}/todos', [NoteController::class, 'todos'])->name('todos');
             Route::get('/{id}/versions', [NoteController::class, 'versions'])->name('versions');
             Route::post('/{id}/versions/{versionId}/restore', [NoteController::class, 'restoreVersion'])->name('versions.restore');
 
@@ -83,18 +92,5 @@ Route::middleware(['auth', 'active'])->group(function () {
             Route::get('/{noteId}/attachments/{id}', [NoteAttachmentController::class, 'show'])->name('attachments.show');
             Route::delete('/{noteId}/attachments/{id}', [NoteAttachmentController::class, 'destroy'])->name('attachments.destroy');
         });
-
-        Route::middleware('role:todo')->prefix('todo')->name('todo.')->group(function () {
-            Route::get('/', [TodoController::class, 'index'])->name('index');
-            Route::post('/', [TodoController::class, 'store'])->name('store');
-            Route::put('/{todo}', [TodoController::class, 'toggle'])->name('toggle');
-            Route::delete('/{todo}', [TodoController::class, 'destroy'])->name('destroy');
-        });
     });
-});
-
-Route::get('/__shot', function () {
-    \Illuminate\Support\Facades\Auth::login(\App\Models\User::first());
-    $n = \App\Models\Note::first() ?? \App\Models\Note::create(['user_id' => \App\Models\User::first()->id, 'title' => 'Study notes', 'type' => 'study', 'body' => '<p><b>Subject:</b></p><h2>Key points</h2><ul><li>x</li></ul>']);
-    return redirect()->route('notes.edit', $n->id);
 });

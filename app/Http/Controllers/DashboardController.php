@@ -18,9 +18,6 @@ class DashboardController extends Controller
         if ($user->hasRole('notes')) {
             $stats['notes'] = ['n' => Note::where('user_id', $user->id)->count(), 'label' => 'notes'];
         }
-        if ($user->hasRole('todo')) {
-            $stats['todo'] = ['n' => Todo::where('user_id', $user->id)->where('done', false)->count(), 'label' => 'to do'];
-        }
         if ($user->hasRole('admin')) {
             $stats['admin'] = ['n' => User::count(), 'label' => 'users'];
         }

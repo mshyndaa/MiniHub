@@ -6,7 +6,6 @@ use App\Models\Folder;
 use App\Models\Note;
 use App\Models\NoteVersion;
 use App\Models\Tag;
-use App\Models\Todo;
 use App\Support\NoteHtml;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -129,7 +128,6 @@ class NoteController extends Controller
             'note' => $note->load(['tags', 'attachments']),
             'folders' => Folder::where('user_id', $uid)->orderBy('name')->get(),
             'allTags' => Tag::where('user_id', $uid)->orderBy('name')->pluck('name'),
-            'canTodo' => $request->user()->hasRole('todo'),
         ]);
     }
 
@@ -275,19 +273,6 @@ class NoteController extends Controller
         $note->save();
 
         return response()->json(['url' => $note->share_token ? route('notes.shared', $note->share_token) : null]);
-    }
-
-    public function todos(Request $request, $id)
-    {
-        abort_unless($request->user()->hasRole('todo'), 403);
-        $this->find($request, $id);
-
-        $data = $request->validate(['items' => ['required', 'array', 'min:1', 'max:50'], 'items.*' => ['required', 'string', 'max:200']]);
-        foreach ($data['items'] as $text) {
-            Todo::create(['user_id' => $request->user()->id, 'text' => trim($text)]);
-        }
-
-        return response()->json(['count' => count($data['items'])]);
     }
 
     public function versions(Request $request, $id)

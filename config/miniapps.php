@@ -24,13 +24,4 @@ return [
         'route' => 'notes.index',
         'roles' => ['notes'],
     ],
-    'todo' => [
-        'name' => 'To-do',
-        'description' => 'Keep track of what to do.',
-        'icon' => '✅',
-        'symbol' => 'square-check',
-        'color' => 'pink',
-        'route' => 'todo.index',
-        'roles' => ['todo'],
-    ],
 ];
