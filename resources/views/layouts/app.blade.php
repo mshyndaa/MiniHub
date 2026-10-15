@@ -4,8 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="theme-color" content="#f1f5f9" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#0d0f15" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#f1f5f9">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="{{ config('app.name') }}">
@@ -22,6 +21,7 @@
             try { t = localStorage.getItem('theme'); s = localStorage.getItem('sidebar'); } catch (e) {}
             if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 document.documentElement.classList.add('dark');
+                document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0f15');
             }
             if (s === 'collapsed') document.documentElement.classList.add('sidebar-collapsed');
         })();

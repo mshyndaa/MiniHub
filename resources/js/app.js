@@ -6,6 +6,8 @@ import './notes';
 document.querySelectorAll('[data-theme-toggle]').forEach((btn) => {
     btn.addEventListener('click', () => {
         const dark = document.documentElement.classList.toggle('dark');
+        // Keep the phone's status bar in step with the in-app theme, not the OS setting.
+        document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#0d0f15' : '#f1f5f9');
         try {
             localStorage.setItem('theme', dark ? 'dark' : 'light');
         } catch (e) {
@@ -13,6 +15,18 @@ document.querySelectorAll('[data-theme-toggle]').forEach((btn) => {
         }
     });
 });
+
+// The server runs in UTC; show the greeting and date for the viewer's own clock.
+const localGreeting = document.querySelector('[data-local-greeting]');
+if (localGreeting) {
+    const now = new Date();
+    const h = now.getHours();
+    localGreeting.textContent = h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
+    const localDate = document.querySelector('[data-local-date]');
+    if (localDate) {
+        localDate.textContent = now.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }).replace(/^(\w+)\s/, '$1, ');
+    }
+}
 
 // Copy button for the one-time temporary password.
 document.querySelectorAll('[data-copy]').forEach((btn) => {

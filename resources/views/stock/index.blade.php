@@ -22,7 +22,7 @@
     <summary class="flex cursor-pointer list-none items-center justify-between gap-3 [&::-webkit-details-marker]:hidden">
         <span class="block font-extrabold leading-tight">New item</span>
         <span class="flex items-center gap-2">
-            <a href="{{ route('stock.tv') }}" target="_blank" class="btn btn-soft" onclick="event.stopPropagation()"><x-icon name="eye" class="h-4 w-4" /> Open TV display</a>
+            <a href="{{ route('stock.tv') }}" target="_blank" class="btn btn-soft tv-link" onclick="event.stopPropagation()"><x-icon name="eye" class="h-4 w-4" /> Open TV display</a>
             <span class="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1.5 text-sm font-semibold text-slate-600 dark:bg-white/10 dark:text-slate-300">
                 <x-icon name="plus" class="h-4 w-4 transition-transform group-open:rotate-45" /> <span class="group-open:hidden">Add</span><span class="hidden group-open:inline">Close</span>
             </span>

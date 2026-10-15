@@ -56,7 +56,7 @@
     {{-- Wheel + results --}}
     <div class="space-y-6">
         <div class="flex flex-wrap justify-center gap-2">
-            <a href="{{ route('spin.tv') }}" target="_blank" class="btn btn-soft"><x-icon name="eye" class="h-4 w-4" /> Open TV display</a>
+            <a href="{{ route('spin.tv') }}" target="_blank" class="btn btn-soft tv-link"><x-icon name="eye" class="h-4 w-4" /> Open TV display</a>
             <button id="fs" type="button" class="btn btn-soft"><x-icon name="layout-grid" class="h-4 w-4" /> Full screen</button>
         </div>
         <div id="stageWrap" class="spin-fs">

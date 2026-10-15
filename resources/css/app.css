@@ -566,6 +566,8 @@ a, button, [role="button"], label, summary { touch-action: manipulation; }
 @media (display-mode: standalone) {
     body { -webkit-user-select: none; user-select: none; }
     input, textarea, [contenteditable], .select-text { -webkit-user-select: text; user-select: text; }
+    /* TV display is monitor-only; hide its launchers in the installed app. */
+    .tv-link { display: none !important; }
 }
 /* Tablets in portrait keep the drawer but get a roomier one. */
 @media (min-width: 768px) and (max-width: 1023px) { .sidebar { width: 20rem; } }
