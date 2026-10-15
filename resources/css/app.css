@@ -569,3 +569,6 @@ a, button, [role="button"], label, summary { touch-action: manipulation; }
 }
 /* Tablets in portrait keep the drawer but get a roomier one. */
 @media (min-width: 768px) and (max-width: 1023px) { .sidebar { width: 20rem; } }
+
+/* Installed iOS app: the status bar is translucent with white text, so keep a dark strip behind it in both themes. */
+body::before { content: ''; position: fixed; top: 0; left: 0; right: 0; height: env(safe-area-inset-top); background: #0d0f15; z-index: 60; pointer-events: none; }
