@@ -46,8 +46,12 @@
         <div class="login-glow" aria-hidden="true"></div>
 
         <div class="card login-card relative !p-8">
+            <button type="button" data-theme-toggle aria-label="Toggle dark mode" title="Toggle theme"
+                    class="btn btn-soft absolute right-4 top-4 z-10 h-10 w-10 !p-0">
+                <x-icon name="moon" class="dark:hidden" /><x-icon name="sun" class="hidden dark:block" />
+            </button>
             <div class="mb-6 text-center">
-                <div class="login-logo brand-mark mx-auto mb-4 h-16 w-16 !rounded-3xl"><x-icon name="palette" class="h-8 w-8" /></div>
+                <div class="login-logo brand-mark mx-auto mb-4 h-16 w-16 overflow-hidden !rounded-3xl"><img src="{{ asset('favicon.svg') }}" alt="" class="h-full w-full"></div>
                 <h1 class="text-3xl font-extrabold">
                     Welcome to
                     <span class="brand-text">{{ config('app.name') }}</span>

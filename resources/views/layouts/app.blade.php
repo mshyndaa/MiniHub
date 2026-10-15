@@ -32,7 +32,7 @@
     <div class="topbar lg:hidden">
         <button type="button" data-sidebar-open aria-label="Open menu" class="btn btn-soft h-10 w-10 !p-0"><x-icon name="menu" /></button>
         <a href="{{ route('dashboard') }}" class="brand text-lg">
-            <span class="brand-mark h-8 w-8"><x-icon name="palette" class="h-4 w-4" /></span>
+            <span class="brand-mark h-8 w-8 overflow-hidden"><img src="{{ asset('favicon.svg') }}" alt="" class="h-full w-full"></span>
             <span class="brand-text">{{ config('app.name') }}</span>
         </a>
         <button type="button" data-theme-toggle aria-label="Toggle dark mode" class="btn btn-soft h-10 w-10 !p-0">
@@ -45,7 +45,7 @@
     <aside class="sidebar" id="sidebar">
         <div class="flex items-center justify-between gap-2">
             <a href="{{ route('dashboard') }}" class="brand px-1 text-xl">
-                <span class="brand-mark h-10 w-10 shrink-0"><x-icon name="palette" /></span>
+                <span class="brand-mark h-10 w-10 shrink-0 overflow-hidden"><img src="{{ asset('favicon.svg') }}" alt="" class="h-full w-full"></span>
                 <span class="brand-text">{{ config('app.name') }}</span>
             </a>
             <button type="button" data-sidebar-collapse class="collapse-btn" aria-label="Collapse sidebar" title="Collapse sidebar">
@@ -107,11 +107,14 @@
         </div>
     </main>
 @else
-    <header class="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-4">
-        <a href="#" class="brand text-xl">
-            <span class="brand-mark h-10 w-10"><x-icon name="palette" /></span>
-            <span class="brand-text">{{ config('app.name') }}</span>
-        </a>
+    @unless (request()->routeIs('login'))
+    <header class="mx-auto flex max-w-5xl items-center gap-3 px-4 py-4 {{ request()->routeIs('login') ? 'justify-end' : 'justify-between' }}">
+        @unless (request()->routeIs('login'))
+            <a href="#" class="brand text-xl">
+                <span class="brand-mark h-10 w-10 overflow-hidden"><img src="{{ asset('favicon.svg') }}" alt="" class="h-full w-full"></span>
+                <span class="brand-text">{{ config('app.name') }}</span>
+            </a>
+        @endunless
 
         <div class="flex items-center gap-2">
             <button type="button" data-theme-toggle aria-label="Toggle dark mode" class="btn btn-soft h-10 w-10 !p-0">
@@ -126,6 +129,7 @@
             @endauth
         </div>
     </header>
+    @endunless
 
     <main class="mx-auto max-w-5xl px-4 pb-16">
         @if (session('status'))
