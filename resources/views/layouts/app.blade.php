@@ -29,6 +29,7 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=nunito:400,600,700,800" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script src="{{ asset('session-guard.js') }}"></script>
 </head>
 @php
     // The sidebar shell is for signed-in users who are free to use the hub.

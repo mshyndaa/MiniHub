@@ -87,6 +87,9 @@
                 <p class="mt-1 text-sm opacity-70">Log in to open your mini programs</p>
             </div>
 
+            @if (session('status'))
+                <p class="mb-4 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">{{ session('status') }}</p>
+            @endif
             <form method="POST" action="{{ route('login') }}" class="space-y-4">
                 @csrf
                 <div>

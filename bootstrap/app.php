@@ -20,5 +20,12 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        // An expired session surfaces as a CSRF mismatch on form posts: send the user back to login.
+        $exceptions->render(function (\Illuminate\Session\TokenMismatchException $e, \Illuminate\Http\Request $request) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Session expired.'], 419);
+            }
+
+            return redirect()->route('login')->with('status', 'Your session expired. Please sign in again.');
+        });
     })->create();
