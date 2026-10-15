@@ -515,3 +515,23 @@
         *, *::before, *::after { animation: none !important; transition: none !important; }
     }
 }
+
+/* ---------- PWA / touch devices (unlayered so they win over component padding) ---------- */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; overscroll-behavior-y: none; }
+body { min-height: 100vh; min-height: 100dvh; }
+a, button, [role="button"], label, summary { touch-action: manipulation; }
+/* Keep content clear of notches / home indicator when installed (needs viewport-fit=cover). */
+.app-main { padding-bottom: env(safe-area-inset-bottom); padding-right: env(safe-area-inset-right); }
+.topbar { padding-top: calc(0.75rem + env(safe-area-inset-top)); padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right)); }
+.sidebar { padding-top: calc(1rem + env(safe-area-inset-top)); padding-bottom: calc(1rem + env(safe-area-inset-bottom)); }
+@media (hover: none) and (pointer: coarse) {
+    /* 16px inputs stop iOS Safari zooming the page on focus; 44px targets for fingers. */
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select, textarea { font-size: 16px; }
+    .nav-link, .btn, .side-btn { min-height: 44px; }
+}
+@media (display-mode: standalone) {
+    body { -webkit-user-select: none; user-select: none; }
+    input, textarea, [contenteditable], .select-text { -webkit-user-select: text; user-select: text; }
+}
+/* Tablets in portrait keep the drawer but get a roomier one. */
+@media (min-width: 768px) and (max-width: 1023px) { .sidebar { width: 20rem; } }

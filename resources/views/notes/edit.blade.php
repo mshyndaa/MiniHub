@@ -36,7 +36,6 @@
      data-toggle-url="{{ route('notes.toggle', [$note->id, 'FIELD']) }}"
      data-share-url="{{ route('notes.share', $note->id) }}"
      data-versions-url="{{ route('notes.versions', $note->id) }}"
-     data-todos-url="{{ route('notes.todos', $note->id) }}"
      data-attach-url="{{ route('notes.attachments.store', $note->id) }}"
      data-shared="{{ $note->share_token ? route('notes.shared', $note->share_token) : '' }}">
 
@@ -83,10 +82,6 @@
                     <button type="button" class="editor-btn" data-cmd="{{ $tool[0] }}" title="{{ $tool[2] }}" aria-label="{{ $tool[2] }}"><x-icon :name="$tool[1]" class="h-4 w-4" /></button>
                 @endif
             @endforeach
-            @if ($canTodo)
-                <span class="editor-sep"></span>
-                <button type="button" class="editor-btn !w-auto gap-1 px-2.5 text-xs font-extrabold" id="btn-todo" title="Send unchecked checklist items to your To-do list"><x-icon name="square-check" class="h-4 w-4" /> To-do</button>
-            @endif
         </div>
 
             <div class="note-paper-body">

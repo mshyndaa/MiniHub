@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Note;
-use App\Models\Todo;
 use App\Models\User;
 use Illuminate\Http\Request;
 

@@ -2,13 +2,6 @@
 @section('title', 'Profile · '.config('app.name'))
 
 @php
-    $tiles = array_filter([
-        ['file-text', 'Notes', $stats['notes'], 'bg-sky-100 text-sky-600 dark:bg-sky-500/15 dark:text-sky-300'],
-        ['hourglass', 'To do', $stats['open'], 'bg-amber-100 text-amber-600 dark:bg-amber-500/15 dark:text-amber-300'],
-        ['circle-check', 'Completed', $stats['done'], 'bg-emerald-100 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-300'],
-        ['puzzle', 'Mini programs', count($apps), 'bg-cyan-100 text-cyan-600 dark:bg-cyan-500/15 dark:text-cyan-300'],
-    ], fn ($t) => $t[2] !== null);
-
     $details = [
         ['user', 'Full name', $user->name],
         ['mail', 'Email', $user->email],
@@ -76,19 +69,6 @@
         </div>
     </div>
 </div>
-
-{{-- Stats --}}
-@if (count($tiles))
-    <div class="stagger mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
-        @foreach ($tiles as [$symbol, $label, $value, $grad])
-            <div class="stat-tile">
-                <span class="grid h-10 w-10 place-items-center rounded-xl {{ $grad }}"><x-icon :name="$symbol" /></span>
-                <p class="mt-4 text-4xl font-extrabold tracking-tight" data-count="{{ $value }}">{{ $value }}</p>
-                <p class="text-xs font-bold uppercase tracking-wider opacity-60">{{ $label }}</p>
-            </div>
-        @endforeach
-    </div>
-@endif
 
 <div class="stagger mt-6 grid gap-6 lg:grid-cols-5">
     {{-- Account details --}}

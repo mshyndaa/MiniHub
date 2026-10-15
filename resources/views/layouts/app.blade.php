@@ -2,8 +2,17 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="theme-color" content="#f1f5f9" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0d0f15" media="(prefers-color-scheme: dark)">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="{{ config('app.name') }}">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="manifest" href="{{ asset('manifest.webmanifest') }}">
+    <link rel="apple-touch-icon" href="{{ asset('icons/apple-touch-icon.png') }}">
     <title>@yield('title', config('app.name'))</title>
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}?v={{ filemtime(public_path('favicon.svg')) }}">
     <script>
@@ -27,7 +36,13 @@
 @endphp
 <body>
 @if ($shell)
-    @php $user = auth()->user(); @endphp
+    @php
+        $user = auth()->user();
+        // Admin is a management tool, not a mini program: it gets its own spot at the bottom.
+        $allApps = collect($user->apps());
+        $adminApp = $allApps->first(fn ($a) => str_starts_with($a['route'], 'admin.'));
+        $miniApps = $allApps->reject(fn ($a) => str_starts_with($a['route'], 'admin.'))->values();
+    @endphp
     @include('partials.cloud-defs')
 
     {{-- Mobile top bar --}}
@@ -59,9 +74,9 @@
                 <span class="nav-icon"><x-icon name="home" /></span> <span class="nav-label">Dashboard</span>
             </a>
 
-            @if (count($user->apps()))
+            @if ($miniApps->isNotEmpty())
                 <p class="nav-heading mt-5">Mini programs</p>
-                @foreach ($user->apps() as $app)
+                @foreach ($miniApps as $app)
                     <a href="{{ route($app['route']) }}" title="{{ $app['name'] }}"
                        class="nav-link {{ request()->routeIs(\Illuminate\Support\Str::before($app['route'], '.').'.*') ? 'nav-link-active' : '' }}">
                         <span class="nav-icon"><x-icon :name="$app['symbol']" /></span> <span class="nav-label">{{ $app['name'] }}</span>
@@ -71,6 +86,12 @@
         </nav>
 
         <div class="space-y-3 border-t border-slate-200/70 pt-4 dark:border-white/10">
+            @if ($adminApp)
+                <a href="{{ route($adminApp['route']) }}" title="{{ $adminApp['name'] }}" class="nav-link {{ request()->routeIs('admin.*') ? 'nav-link-active' : '' }}">
+                    <span class="nav-icon"><x-icon :name="$adminApp['symbol']" /></span> <span class="nav-label">{{ $adminApp['name'] }}</span>
+                </a>
+            @endif
+
             <a href="{{ route('profile') }}" title="Profile"
                class="profile-chip {{ request()->routeIs('profile') ? 'profile-chip-active' : '' }}">
                 @include('partials.avatar', ['user' => $user, 'class' => 'h-11 w-11 rounded-xl text-lg'])
@@ -138,5 +159,10 @@
         @yield('content')
     </main>
 @endif
+<script>
+    if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+        window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js').catch(function () {}); });
+    }
+</script>
 </body>
 </html>

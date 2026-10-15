@@ -365,25 +365,6 @@ function initEditor(root) {
         setTimeout(() => (label.textContent = 'Copy link'), 1800);
     });
 
-    /* ---- send checklist items to To-do ---- */
-    $('#btn-todo')?.addEventListener('click', async () => {
-        const items = [...editor.querySelectorAll('ul[data-checklist] > li:not([data-checked="true"])')]
-            .map((li) => li.textContent.trim().slice(0, 200))
-            .filter(Boolean);
-        if (!items.length) {
-            window.alert('There are no unchecked checklist items in this note.\n\nAdd a checklist with the checklist button first.');
-            return;
-        }
-        if (!window.confirm(`Add ${items.length} item${items.length === 1 ? '' : 's'} to your To-do list?\n\n• ${items.slice(0, 8).join('\n• ')}${items.length > 8 ? '\n…' : ''}`)) return;
-        try {
-            const res = await fetch(root.dataset.todosUrl, { method: 'POST', headers: jsonHeaders(), body: JSON.stringify({ items }) });
-            if (!res.ok) throw new Error();
-            setStatus(`Sent ${items.length} to To-do`);
-        } catch (e) {
-            setStatus('Could not send to To-do', true);
-        }
-    });
-
     /* ---- attachments ---- */
     const attachList = $('#attach-list');
     const attachEmpty = $('#attach-empty');
