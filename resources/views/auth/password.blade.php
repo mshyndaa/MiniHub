@@ -4,7 +4,7 @@
 @section('content')
 <div class="mx-auto mt-8 max-w-sm">
     <div class="card">
-        <h1 class="mb-1 text-2xl font-extrabold">Change password 🔑</h1>
+        <h1 class="mb-1 text-2xl font-extrabold">Change password</h1>
         @if (auth()->user()->must_change_password)
             <p class="mb-5 text-sm opacity-70">Your password was set by an admin. Please choose your own before continuing.</p>
         @else

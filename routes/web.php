@@ -4,7 +4,9 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MediaController;
 use App\Http\Controllers\NoteController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TodoController;
 use Illuminate\Support\Facades\Route;
 
@@ -20,6 +22,10 @@ Route::middleware(['auth', 'active'])->group(function () {
 
     Route::middleware('password.changed')->group(function () {
         Route::get('/', DashboardController::class)->name('dashboard');
+        Route::get('/profile', ProfileController::class)->name('profile');
+        Route::get('/media/{user}/{kind}', [MediaController::class, 'show'])->name('media');
+        Route::post('/profile/{kind}', [MediaController::class, 'update'])->whereIn('kind', ['avatar', 'banner'])->name('profile.media.update');
+        Route::delete('/profile/{kind}', [MediaController::class, 'destroy'])->whereIn('kind', ['avatar', 'banner'])->name('profile.media.destroy');
 
         Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
             Route::get('/users', [UserController::class, 'index'])->name('users.index');

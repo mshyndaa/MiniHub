@@ -4,32 +4,118 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', config('app.name'))</title>
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}?v={{ filemtime(public_path('favicon.svg')) }}">
     <script>
-        // Apply saved theme (or the device preference) before first paint.
+        // Apply saved theme / sidebar state before first paint.
         (function () {
-            var t = null;
-            try { t = localStorage.getItem('theme'); } catch (e) {}
+            var t = null, s = null;
+            try { t = localStorage.getItem('theme'); s = localStorage.getItem('sidebar'); } catch (e) {}
             if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 document.documentElement.classList.add('dark');
             }
+            if (s === 'collapsed') document.documentElement.classList.add('sidebar-collapsed');
         })();
     </script>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=nunito:400,600,700,800" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
+@php
+    // The sidebar shell is for signed-in users who are free to use the hub.
+    $shell = auth()->check() && ! auth()->user()->must_change_password;
+@endphp
 <body>
+@if ($shell)
+    @php $user = auth()->user(); @endphp
+
+    {{-- Mobile top bar --}}
+    <div class="topbar lg:hidden">
+        <button type="button" data-sidebar-open aria-label="Open menu" class="btn btn-soft h-10 w-10 !p-0"><x-icon name="menu" /></button>
+        <a href="{{ route('dashboard') }}" class="brand text-lg">
+            <span class="brand-mark h-8 w-8"><x-icon name="palette" class="h-4 w-4" /></span>
+            <span class="brand-text">{{ config('app.name') }}</span>
+        </a>
+        <button type="button" data-theme-toggle aria-label="Toggle dark mode" class="btn btn-soft h-10 w-10 !p-0">
+            <x-icon name="moon" class="dark:hidden" /><x-icon name="sun" class="hidden dark:block" />
+        </button>
+    </div>
+
+    <div class="sidebar-backdrop" data-sidebar-close></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="flex items-center justify-between gap-2">
+            <a href="{{ route('dashboard') }}" class="brand px-1 text-xl">
+                <span class="brand-mark h-10 w-10 shrink-0"><x-icon name="palette" /></span>
+                <span class="brand-text">{{ config('app.name') }}</span>
+            </a>
+            <button type="button" data-sidebar-collapse class="collapse-btn" aria-label="Collapse sidebar" title="Collapse sidebar">
+                <x-icon name="chevrons-left" class="h-5 w-5" />
+            </button>
+        </div>
+
+        <nav class="mt-8 flex-1 space-y-1">
+            <p class="nav-heading">Menu</p>
+            <a href="{{ route('dashboard') }}" title="Dashboard" class="nav-link {{ request()->routeIs('dashboard') ? 'nav-link-active' : '' }}">
+                <span class="nav-icon"><x-icon name="home" /></span> <span class="nav-label">Dashboard</span>
+            </a>
+
+            @if (count($user->apps()))
+                <p class="nav-heading mt-5">Mini programs</p>
+                @foreach ($user->apps() as $app)
+                    <a href="{{ route($app['route']) }}" title="{{ $app['name'] }}"
+                       class="nav-link {{ request()->routeIs(\Illuminate\Support\Str::before($app['route'], '.').'.*') ? 'nav-link-active' : '' }}">
+                        <span class="nav-icon"><x-icon :name="$app['symbol']" /></span> <span class="nav-label">{{ $app['name'] }}</span>
+                    </a>
+                @endforeach
+            @endif
+        </nav>
+
+        <div class="space-y-3 border-t border-slate-200/70 pt-4 dark:border-white/10">
+            <a href="{{ route('profile') }}" title="Profile"
+               class="profile-chip {{ request()->routeIs('profile') ? 'profile-chip-active' : '' }}">
+                @include('partials.avatar', ['user' => $user, 'class' => 'h-11 w-11 rounded-xl text-lg'])
+                <span class="pc-text min-w-0 flex-1">
+                    <span class="block truncate text-sm font-extrabold">{{ $user->name }}</span>
+                    <span class="block truncate text-xs opacity-60">View profile</span>
+                </span>
+                <x-icon name="chevron-right" class="pc-text h-4 w-4 opacity-40" />
+            </a>
+
+            <div class="side-grid grid grid-cols-2 gap-2">
+                <button type="button" data-theme-toggle class="side-btn" title="Toggle theme">
+                    <x-icon name="moon" class="h-4 w-4 dark:hidden" /><x-icon name="sun" class="hidden h-4 w-4 dark:block" />
+                    <span class="side-lbl dark:hidden">Dark</span><span class="side-lbl hidden dark:inline">Light</span>
+                </button>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button class="side-btn side-btn-danger w-full" title="Log out">
+                        <x-icon name="log-out" class="h-4 w-4" /><span class="side-lbl">Log out</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </aside>
+
+    <main class="app-main">
+        <div class="mx-auto max-w-5xl px-4 py-6 sm:px-8 sm:py-10">
+            @if (session('status'))
+                <div class="alert-ok mb-6">{{ session('status') }}</div>
+            @endif
+            <div class="stagger">
+                @yield('content')
+            </div>
+        </div>
+    </main>
+@else
     <header class="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-4">
-        <a href="{{ auth()->check() && ! auth()->user()->must_change_password ? route('dashboard') : '#' }}"
-           class="flex items-center gap-2 text-xl font-extrabold">
-            <span class="grid h-10 w-10 place-items-center rounded-2xl bg-gradient-to-br from-sky-400 via-pink-400 to-yellow-300 text-white shadow">🎨</span>
-            <span class="bg-gradient-to-r from-sky-500 via-pink-500 to-amber-400 bg-clip-text text-transparent">{{ config('app.name') }}</span>
+        <a href="#" class="brand text-xl">
+            <span class="brand-mark h-10 w-10"><x-icon name="palette" /></span>
+            <span class="brand-text">{{ config('app.name') }}</span>
         </a>
 
         <div class="flex items-center gap-2">
-            <button type="button" data-theme-toggle aria-label="Toggle dark mode"
-                    class="btn btn-soft h-10 w-10 !p-0 text-lg">
-                <span class="dark:hidden">🌙</span><span class="hidden dark:inline">☀️</span>
+            <button type="button" data-theme-toggle aria-label="Toggle dark mode" class="btn btn-soft h-10 w-10 !p-0">
+                <x-icon name="moon" class="dark:hidden" /><x-icon name="sun" class="hidden dark:block" />
             </button>
             @auth
                 <span class="hidden text-sm font-bold sm:inline">{{ auth()->user()->name }}</span>
@@ -47,5 +133,6 @@
         @endif
         @yield('content')
     </main>
+@endif
 </body>
 </html>

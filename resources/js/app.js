@@ -16,11 +16,55 @@ document.querySelectorAll('[data-theme-toggle]').forEach((btn) => {
 // Copy button for the one-time temporary password.
 document.querySelectorAll('[data-copy]').forEach((btn) => {
     btn.addEventListener('click', async () => {
+        const label = btn.querySelector('[data-label]') ?? btn;
         try {
             await navigator.clipboard.writeText(btn.dataset.copy);
-            btn.textContent = 'Copied!';
+            label.textContent = 'Copied!';
         } catch (e) {
-            btn.textContent = 'Press Ctrl+C';
+            label.textContent = 'Press Ctrl+C';
         }
     });
+});
+
+// Mobile sidebar drawer.
+const openSidebar = (open) => document.body.classList.toggle('sidebar-open', open);
+document.querySelectorAll('[data-sidebar-open]').forEach((b) => b.addEventListener('click', () => openSidebar(true)));
+document.querySelectorAll('[data-sidebar-close]').forEach((b) => b.addEventListener('click', () => openSidebar(false)));
+document.addEventListener('keydown', (e) => e.key === 'Escape' && openSidebar(false));
+
+// Desktop sidebar collapse (remembered; the initial class is set in the layout <head>).
+document.querySelectorAll('[data-sidebar-collapse]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+        const collapsed = document.documentElement.classList.toggle('sidebar-collapsed');
+        try {
+            localStorage.setItem('sidebar', collapsed ? 'collapsed' : 'open');
+        } catch (e) {
+            // ignore
+        }
+    });
+});
+
+// Cursor-following shine on glass cards.
+document.addEventListener('pointermove', (e) => {
+    const el = e.target.closest?.('.card, .app-card, .stat-tile, .feature-tile');
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    el.style.setProperty('--mx', `${e.clientX - r.left}px`);
+    el.style.setProperty('--my', `${e.clientY - r.top}px`);
+});
+
+// Count-up numbers: <span data-count="12">12</span>
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+document.querySelectorAll('[data-count]').forEach((el) => {
+    const target = parseInt(el.dataset.count, 10);
+    if (reduceMotion || !Number.isFinite(target) || target === 0) return;
+    const start = performance.now();
+    const duration = 900;
+    const tick = (now) => {
+        const t = Math.min((now - start) / duration, 1);
+        el.textContent = Math.round(target * (1 - Math.pow(1 - t, 3)));
+        if (t < 1) requestAnimationFrame(tick);
+    };
+    el.textContent = '0';
+    requestAnimationFrame(tick);
 });

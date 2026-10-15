@@ -2,12 +2,29 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Note;
+use App\Models\Todo;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
     public function __invoke(Request $request)
     {
-        return view('dashboard', ['apps' => $request->user()->apps()]);
+        $user = $request->user();
+
+        // Quick numbers shown on the matching app cards.
+        $stats = [];
+        if ($user->hasRole('notes')) {
+            $stats['notes'] = ['n' => Note::where('user_id', $user->id)->count(), 'label' => 'notes'];
+        }
+        if ($user->hasRole('todo')) {
+            $stats['todo'] = ['n' => Todo::where('user_id', $user->id)->where('done', false)->count(), 'label' => 'to do'];
+        }
+        if ($user->hasRole('admin')) {
+            $stats['admin'] = ['n' => User::count(), 'label' => 'users'];
+        }
+
+        return view('dashboard', ['apps' => $user->apps(), 'stats' => $stats]);
     }
 }

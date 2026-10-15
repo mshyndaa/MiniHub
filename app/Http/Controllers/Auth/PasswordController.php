@@ -20,11 +20,13 @@ class PasswordController extends Controller
             'password' => ['required', 'confirmed', 'different:current_password', Password::min(8)],
         ]);
 
+        $wasForced = $request->user()->must_change_password;
+
         $request->user()->update([
             'password' => $data['password'],
             'must_change_password' => false,
         ]);
 
-        return redirect()->route('dashboard')->with('status', 'Password updated.');
+        return redirect()->route($wasForced ? 'dashboard' : 'profile')->with('status', 'Password updated.');
     }
 }

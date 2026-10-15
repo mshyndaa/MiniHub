@@ -19,6 +19,8 @@ class User extends Authenticatable
         'password',
         'is_active',
         'must_change_password',
+        'avatar_path',
+        'banner_path',
     ];
 
     protected $attributes = [
@@ -39,6 +41,16 @@ class User extends Authenticatable
             'is_active' => 'boolean',
             'must_change_password' => 'boolean',
         ];
+    }
+
+    public function avatarUrl(): ?string
+    {
+        return $this->avatar_path ? route("media", [$this, "avatar", "v" => $this->updated_at?->timestamp]) : null;
+    }
+
+    public function bannerUrl(): ?string
+    {
+        return $this->banner_path ? route("media", [$this, "banner", "v" => $this->updated_at?->timestamp]) : null;
     }
 
     public function roles(): HasMany
