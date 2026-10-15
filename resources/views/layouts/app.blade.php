@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', config('app.name'))</title>
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}?v={{ filemtime(public_path('favicon.svg')) }}">
     <script>
@@ -27,12 +28,12 @@
 <body>
 @if ($shell)
     @php $user = auth()->user(); @endphp
+    @include('partials.cloud-defs')
 
     {{-- Mobile top bar --}}
     <div class="topbar lg:hidden">
         <button type="button" data-sidebar-open aria-label="Open menu" class="btn btn-soft h-10 w-10 !p-0"><x-icon name="menu" /></button>
-        <a href="{{ route('dashboard') }}" class="brand text-lg">
-            <span class="brand-mark h-8 w-8 overflow-hidden"><img src="{{ asset('favicon.svg') }}" alt="" class="h-full w-full"></span>
+        <a href="{{ route('dashboard') }}" class="brand text-lg uppercase tracking-widest">
             <span class="brand-text">{{ config('app.name') }}</span>
         </a>
         <button type="button" data-theme-toggle aria-label="Toggle dark mode" class="btn btn-soft h-10 w-10 !p-0">
@@ -44,9 +45,8 @@
 
     <aside class="sidebar" id="sidebar">
         <div class="flex items-center justify-between gap-2">
-            <a href="{{ route('dashboard') }}" class="brand px-1 text-xl">
-                <span class="brand-mark h-10 w-10 shrink-0 overflow-hidden"><img src="{{ asset('favicon.svg') }}" alt="" class="h-full w-full"></span>
-                <span class="brand-text">{{ config('app.name') }}</span>
+            <a href="{{ route('dashboard') }}" class="brand flex-1 justify-center px-1 text-xl uppercase tracking-widest">
+                <span class="brand-text">{{ config('app.name') }}</span><span class="brand-short brand-text hidden">CJ</span>
             </a>
             <button type="button" data-sidebar-collapse class="collapse-btn" aria-label="Collapse sidebar" title="Collapse sidebar">
                 <x-icon name="chevrons-left" class="h-5 w-5" />
@@ -97,7 +97,7 @@
     </aside>
 
     <main class="app-main">
-        <div class="mx-auto max-w-5xl px-4 py-6 sm:px-8 sm:py-10">
+        <div class="mx-auto {{ View::hasSection('wide') ? 'max-w-none' : 'max-w-5xl' }} px-4 py-6 sm:px-8 sm:py-10">
             @if (session('status'))
                 <div class="alert-ok mb-6">{{ session('status') }}</div>
             @endif
@@ -111,7 +111,7 @@
     <header class="mx-auto flex max-w-5xl items-center gap-3 px-4 py-4 {{ request()->routeIs('login') ? 'justify-end' : 'justify-between' }}">
         @unless (request()->routeIs('login'))
             <a href="#" class="brand text-xl">
-                <span class="brand-mark h-10 w-10 overflow-hidden"><img src="{{ asset('favicon.svg') }}" alt="" class="h-full w-full"></span>
+                <span class="brand-mark h-10 w-10 shrink-0">@include('partials.dino', ['class' => 'h-7 w-7'])</span>
                 <span class="brand-text">{{ config('app.name') }}</span>
             </a>
         @endunless

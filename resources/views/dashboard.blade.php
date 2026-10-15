@@ -14,44 +14,26 @@
 
 @section('content')
 <section class="hero-banner">
-    <div class="relative z-10">
-        <p class="text-sm font-bold uppercase tracking-widest opacity-80">{{ now()->format('l, j F Y') }}</p>
-        <h1 class="mt-1 text-3xl font-extrabold sm:text-4xl">{{ $greeting }}, {{ $first }}</h1>
-        <p class="mt-2 max-w-md opacity-90">Pick a mini program below and get things done.</p>
+    <span class="sky-sunglow"></span>
+    <svg class="hero-cloud" style="left:60%;top:8%;width:170px;--t:9s" viewBox="-10 -10 280 140" aria-hidden="true"><use href="#cloud"/></svg>
+    <svg class="hero-cloud" style="left:48%;top:58%;width:120px;--t:12s;opacity:.85" viewBox="-10 -10 280 140" aria-hidden="true"><use href="#cloud"/></svg>
+    <svg class="hero-cloud" style="left:-3%;top:62%;width:170px;--t:11s;opacity:.9" viewBox="-10 -10 280 140" aria-hidden="true"><use href="#cloud"/></svg>
+    <div class="relative z-10 max-w-md">
+        <p class="inline-flex items-center gap-1.5 rounded-full bg-white/25 px-3 py-1 text-xs font-extrabold uppercase tracking-widest text-white"><x-icon name="calendar" class="h-3.5 w-3.5" /> {{ now()->format('l, j F') }}</p>
+        <h1 class="hero-text mt-3 text-3xl font-black tracking-tight text-white sm:text-4xl">{{ $greeting }}, {{ $first }}!</h1>
+        <p class="hero-text mt-2 font-semibold text-white/90">Pick a mini program below and get things done.</p>
     </div>
-    <span class="hero-orb hero-orb-1"></span>
-    <span class="hero-orb hero-orb-2"></span>
-    <span class="hero-icon"><x-icon name="sparkles" class="h-12 w-12" /></span>
+    <div class="hero-dino" aria-hidden="true">
+        <span class="hero-bubble">Hi!</span>
+        @include('partials.dino', ['class' => 'h-28 w-28 text-white drop-shadow-lg sm:h-36 sm:w-36'])
+    </div>
 </section>
 
-<div>
-    <h2 class="mb-4 mt-8 text-lg font-extrabold">Your mini programs</h2>
-
-    @if (count($apps))
-        <div class="stagger grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-            @foreach ($apps as $key => $app)
-                <a href="{{ route($app['route']) }}"
-                   class="app-card group bg-gradient-to-br {{ $tint[$app['color']] ?? $tint['blue'] }}">
-                    <div class="flex items-start justify-between">
-                        <span class="app-icon"><x-icon :name="$app['symbol']" class="h-7 w-7" /></span>
-                        <span class="grid h-9 w-9 place-items-center rounded-full bg-white/60 opacity-0 transition group-hover:translate-x-1 group-hover:opacity-100 dark:bg-white/10"><x-icon name="arrow-right" class="h-4 w-4" /></span>
-                    </div>
-                    <h3 class="mt-5 text-xl font-extrabold text-slate-800 dark:text-white">{{ $app['name'] }}</h3>
-                    <p class="text-sm text-slate-700/80 dark:text-slate-200/80">{{ $app['description'] }}</p>
-                    @isset($stats[$key])
-                        <span class="mt-4 inline-flex items-center gap-1.5 rounded-full bg-white/60 px-3 py-1 text-xs font-extrabold text-slate-700 dark:bg-white/10 dark:text-slate-100">
-                            <span data-count="{{ $stats[$key]['n'] }}">{{ $stats[$key]['n'] }}</span> {{ $stats[$key]['label'] }}
-                        </span>
-                    @endisset
-                </a>
-            @endforeach
-        </div>
-    @else
-        <div class="empty-state">
-            <span class="mx-auto mb-3 grid h-14 w-14 place-items-center rounded-2xl bg-white/70 text-slate-500 shadow dark:bg-white/10"><x-icon name="lock" class="h-7 w-7" /></span>
-            <h2 class="text-xl font-extrabold">No access yet</h2>
-            <p class="opacity-70">You haven't been given any roles. Please contact your admin.</p>
-        </div>
-    @endif
-</div>
+@unless (count($apps))
+    <div class="empty-state mt-8">
+        @include('partials.dino', ['class' => 'mx-auto mb-3 h-16 w-16 text-sky-300'])
+        <h2 class="text-xl font-extrabold">No access yet</h2>
+        <p class="opacity-70">You haven't been given any roles. Please contact your admin.</p>
+    </div>
+@endunless
 @endsection

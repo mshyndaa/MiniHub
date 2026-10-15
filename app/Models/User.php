@@ -72,9 +72,10 @@ class User extends Authenticatable
     /** Mini programs this user is allowed to open. */
     public function apps(): array
     {
-        return array_filter(
-            config('miniapps'),
-            fn ($app) => $this->hasRole(...$app['roles'])
-        );
+        return Menu::orderBy('sort_order')->orderBy('id')->get()
+            ->filter(fn (Menu $menu) => $this->hasRole(...$menu->roles))
+            ->map(fn (Menu $menu) => $menu->toArray())
+            ->values()
+            ->all();
     }
 }

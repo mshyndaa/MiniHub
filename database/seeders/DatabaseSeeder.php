@@ -13,8 +13,8 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $admin = User::firstOrCreate(
-            ['email' => 'admin@pastello.test'],
-            ['name' => 'Admin', 'password' => 'ChangeMe123', 'must_change_password' => true],
+            ['email' => 'admin@cjhub.test'],
+            ['name' => 'Admin', 'password' => 'CJHub123', 'must_change_password' => false],
         );
         $admin->roles()->firstOrCreate(['role' => 'admin']);
     }

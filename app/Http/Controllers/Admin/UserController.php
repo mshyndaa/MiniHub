@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -11,10 +12,10 @@ use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
-    /** Every role any mini program asks for. */
+    /** Every role defined in the Roles admin screen. */
     private function availableRoles(): array
     {
-        return collect(config('miniapps'))->pluck('roles')->flatten()->unique()->values()->all();
+        return Role::orderBy('name')->pluck('name')->all();
     }
 
     private function tempPassword(): string

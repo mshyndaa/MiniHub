@@ -1,4 +1,5 @@
 import './bootstrap';
+import './notes';
 
 // Light / dark toggle. The initial class is set by an inline script in the
 // layout <head> (to avoid a flash); this just handles clicks.

@@ -1,0 +1,122 @@
+/* =====================================================================
+   Notes mini program (imported by app.css)
+   ===================================================================== */
+@layer components {
+    /* Note colours: the card tint */
+    .card.nc-yellow { background: linear-gradient(160deg, #fffbe6, #fff1b8); border-color: #fde68a; }
+    .card.nc-pink { background: linear-gradient(160deg, #fff0f5, #ffd3e1); border-color: #fbcfe8; }
+    .card.nc-blue { background: linear-gradient(160deg, #eef8ff, #cbe6fd); border-color: #bae0fb; }
+    .card.nc-green { background: linear-gradient(160deg, #effcf5, #c5f2da); border-color: #a7e8c6; }
+    .card.nc-violet { background: linear-gradient(160deg, #f5f1ff, #ddd2fd); border-color: #d4c8fb; }
+    .dark .card.nc-yellow { background: linear-gradient(160deg, #3d3314, #4a3d17); border-color: rgb(250 204 21 / 0.25); }
+    .dark .card.nc-pink { background: linear-gradient(160deg, #3d1b2f, #4b2139); border-color: rgb(244 114 182 / 0.25); }
+    .dark .card.nc-blue { background: linear-gradient(160deg, #14304f, #183d63); border-color: rgb(56 189 248 / 0.25); }
+    .dark .card.nc-green { background: linear-gradient(160deg, #123629, #16443a); border-color: rgb(52 211 153 / 0.25); }
+    .dark .card.nc-violet { background: linear-gradient(160deg, #2a2050, #342763); border-color: rgb(167 139 250 / 0.25); }
+
+    /* Filter sidebar */
+    .nf-link { @apply flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-extrabold text-slate-600 transition hover:bg-sky-50 hover:text-sky-700; }
+    .dark .nf-link { @apply text-slate-300 hover:bg-white/10 hover:text-white; }
+    .nf-link-active { @apply bg-sky-100 text-sky-700; }
+    .dark .nf-link-active { @apply bg-sky-500/25 text-sky-100; }
+    .nf-count { @apply ml-auto rounded-full bg-slate-100 px-2 text-xs font-bold text-slate-500; }
+    .dark .nf-count { @apply bg-white/10 text-slate-300; }
+    .nf-mini { @apply grid h-7 w-7 shrink-0 place-items-center rounded-lg text-slate-400 opacity-0 transition hover:text-sky-600 focus:opacity-100 group-hover:opacity-100; }
+    @media (hover: none) { .nf-mini { opacity: 1; } }
+
+    .chip { @apply inline-flex items-center gap-1 rounded-full bg-white/70 px-2.5 py-0.5 text-xs font-bold text-slate-600 ring-1 ring-black/5 transition; }
+    .dark .chip { @apply bg-white/10 text-slate-200 ring-white/10; }
+    a.chip:hover { @apply bg-sky-100 text-sky-700; }
+    .chip-active { @apply bg-sky-500 text-white ring-sky-500 hover:bg-sky-500 hover:text-white; }
+
+    .layout-btn { @apply grid h-9 w-9 place-items-center rounded-xl text-slate-500 transition hover:text-sky-600; }
+    .dark .layout-btn { @apply text-slate-300; }
+    .layout-btn-on { @apply bg-sky-500 text-white shadow hover:text-white; }
+
+    /* Note cards */
+    .note-grid { @apply grid gap-4 sm:grid-cols-2 xl:grid-cols-3 min-[1700px]:grid-cols-4; }
+    .notes-list .note-grid { @apply grid-cols-1 sm:grid-cols-1 xl:grid-cols-1 min-[1700px]:grid-cols-1; }
+    .note-preview { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+    .notes-list .note-preview { -webkit-line-clamp: 2; }
+    .note-act { @apply inline-flex items-center gap-1 rounded-lg p-1.5 text-slate-500 transition hover:bg-black/5 hover:text-sky-600; }
+    .dark .note-act { @apply text-slate-300 hover:bg-white/10; }
+
+    /* Editor chrome */
+    .tb-act { @apply inline-grid h-9 w-9 place-items-center rounded-xl bg-white/80 text-slate-600 ring-1 ring-sky-100 transition hover:bg-white hover:text-sky-600; }
+    .dark .tb-act { @apply bg-white/10 text-slate-200 ring-white/10 hover:bg-white/20; }
+    .tb-on { @apply bg-amber-100 text-amber-600 ring-amber-200; }
+    .dark .tb-on { @apply bg-amber-400/20 text-amber-300 ring-amber-300/30; }
+    details > summary::-webkit-details-marker { display: none; }
+    .menu-pop { @apply absolute right-0 top-full z-30 mt-2 w-56 rounded-2xl border border-sky-100 bg-white p-1.5 shadow-xl; }
+    .dark .menu-pop { @apply border-white/10 bg-slate-800; }
+    .menu-item { @apply flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm font-bold text-slate-700 hover:bg-sky-50; }
+    .dark .menu-item { @apply text-slate-100 hover:bg-white/10; }
+
+    .note-title { @apply w-full border-0 bg-transparent p-0 text-3xl font-black tracking-tight text-slate-900 outline-none placeholder:text-slate-400 dark:text-white; }
+    .meta-field { @apply block space-y-1; }
+    .meta-label { @apply flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider opacity-60; }
+    .swatch { @apply relative grid h-7 w-7 cursor-pointer place-items-center rounded-full ring-2 ring-white/80 transition hover:scale-110; box-shadow: 0 0 0 1px rgb(0 0 0 / 0.12); }
+    .swatch svg { @apply text-slate-800 opacity-0; }
+    .swatch:has(input:checked) svg { opacity: 1; }
+    .swatch:has(input:focus-visible) { @apply ring-sky-400; }
+    .sw-none { background: #ffffff; }
+    .sw-yellow { background: #fde68a; }
+    .sw-pink { background: #fbcfe8; }
+    .sw-blue { background: #bae0fb; }
+    .sw-green { background: #a7e8c6; }
+    .sw-violet { background: #d4c8fb; }
+    .dark .sw-none { background: #1e293b; }
+    .dark .sw-none svg { @apply text-white; }
+
+    /* Paper layout: title, toolbar and body share one flat surface */
+    .note-paper { @apply !p-0; }
+    .note-paper-head { @apply mx-auto w-full max-w-3xl px-6 pb-4 pt-10 sm:px-10; }
+    .note-paper-body { @apply mx-auto w-full max-w-3xl px-6 pb-12 pt-6 sm:px-10; }
+    .note-paper-foot { @apply mx-auto flex w-full max-w-3xl flex-wrap items-center justify-between gap-2 border-t border-black/5 px-6 py-4 text-xs font-bold opacity-60 sm:px-10 dark:border-white/10; }
+    .note-paper .note-title { @apply text-4xl; }
+    .note-paper .note-editable { @apply min-h-[60vh] rounded-none bg-transparent p-0 text-lg leading-8 ring-0 focus:ring-0; }
+    .note-side { @apply !p-5; }
+
+    .editor-bar { @apply sticky top-0 z-20 flex flex-wrap items-center justify-center gap-1 border-y border-black/5 bg-white/80 px-6 py-2 backdrop-blur sm:px-9 dark:border-white/10; }
+    .dark .editor-bar { @apply bg-slate-900/80; }
+    .editor-btn { @apply inline-flex h-9 w-9 items-center justify-center rounded-xl text-slate-600 transition hover:bg-sky-50 hover:text-sky-600; }
+    .dark .editor-btn { @apply text-slate-200 hover:bg-white/10; }
+    .editor-sep { @apply mx-1 h-6 w-px bg-slate-200 dark:bg-white/15; }
+
+    .note-editable { @apply relative min-h-80 rounded-2xl bg-white/60 p-4 outline-none ring-2 ring-transparent transition focus:ring-sky-300/70 dark:bg-slate-900/40; }
+    .note-editable[data-empty]::before { content: attr(data-placeholder); @apply pointer-events-none absolute opacity-40; }
+
+    /* Rich text (editor, shared page) */
+    .note-body { @apply text-base leading-relaxed text-slate-800 dark:text-slate-100; overflow-wrap: anywhere; }
+    .note-body > * + * { margin-top: 0.75em; }
+    .note-body h1 { @apply text-3xl font-black; }
+    .note-body h2 { @apply text-2xl font-black leading-tight; margin-top: 1.2em; }
+    .note-body h3 { @apply text-xl font-extrabold leading-tight; margin-top: 1em; }
+    .note-body ul { list-style: disc; padding-left: 1.6rem; }
+    .note-body ol { list-style: decimal; padding-left: 1.6rem; }
+    .note-body li > ul, .note-body li > ol { margin-top: 0.25em; }
+    .note-body ul[data-checklist] { list-style: none; padding-left: 0; }
+    .note-body ul[data-checklist] > li { position: relative; padding-left: 2rem; min-height: 1.6rem; }
+    .note-body ul[data-checklist] > li::before {
+        content: ''; position: absolute; left: 0.15rem; top: 0.28rem; width: 1.15rem; height: 1.15rem;
+        border-radius: 0.38rem; border: 2px solid #7cc6ff; background: #fff; cursor: pointer; transition: background 0.15s;
+    }
+    .dark .note-body ul[data-checklist] > li::before { background: rgb(255 255 255 / 0.06); }
+    .note-body ul[data-checklist] > li[data-checked='true']::before {
+        background: #2f8fe8 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center / 80% no-repeat;
+        border-color: #2f8fe8;
+    }
+    .note-body ul[data-checklist] > li[data-checked='true'] { opacity: 0.6; text-decoration: line-through; }
+    .note-body blockquote { @apply border-l-4 border-sky-300 py-1 pl-4 italic opacity-85; }
+    .note-body pre { @apply whitespace-pre-wrap rounded-2xl bg-slate-900/5 p-4 font-mono text-sm dark:bg-white/10; }
+    .note-body code { @apply rounded-md bg-slate-900/5 px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/10; }
+    .note-body pre code { @apply bg-transparent p-0; }
+    .note-body a { @apply text-sky-600 underline underline-offset-2 dark:text-sky-300; }
+    .note-body hr { @apply border-0 border-t-2 border-dashed border-sky-200 dark:border-white/20; }
+
+    /* Attachments, dialogs */
+    .attach-row { @apply flex items-center gap-3 rounded-2xl border border-sky-100 bg-white/70 px-3 py-2 dark:border-white/10 dark:bg-white/5; }
+    .note-dialog { @apply m-auto w-[min(34rem,calc(100vw-2rem))] rounded-3xl border border-sky-100 bg-white p-6 text-slate-700 shadow-2xl; }
+    .dark .note-dialog { @apply border-white/10 bg-slate-800 text-slate-100; }
+    .note-dialog::backdrop { background: rgb(15 23 42 / 0.45); backdrop-filter: blur(2px); }
+}

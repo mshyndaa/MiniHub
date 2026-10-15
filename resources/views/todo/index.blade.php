@@ -47,7 +47,7 @@
         </div>
     @empty
         <div class="empty-state">
-            <span class="mx-auto mb-3 grid h-14 w-14 place-items-center rounded-2xl bg-white/70 text-pink-500 shadow dark:bg-white/10"><x-icon name="sparkles" class="h-7 w-7" /></span>
+            @include('partials.dino', ['class' => 'mx-auto mb-3 h-16 w-16 text-sky-300'])
             <p class="font-extrabold">Nothing to do</p>
             <p class="text-sm opacity-70">Enjoy the free time!</p>
         </div>
