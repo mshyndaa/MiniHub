@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7dd3fc"/><stop offset="1" stop-color="#e0f7ff"/></linearGradient>
+    <g id="c" fill="#fff"><circle cx="30" cy="30" r="22"/><circle cx="62" cy="22" r="28"/><circle cx="95" cy="32" r="20"/><rect x="8" y="32" width="108" height="20" rx="10"/></g>
+  </defs>
+  <rect width="1200" height="300" fill="url(#sky)"/>
+  <circle cx="1000" cy="60" r="34" fill="#fde68a"/>
+  <use href="#c" transform="translate(150 40) scale(1.4)"/><use href="#c" transform="translate(560 70) scale(1)" opacity=".9"/>
+  <rect y="170" width="1200" height="130" fill="#38bdf8"/>
+  <path d="M0 190 Q50 176 100 190 T200 190 T300 190 T400 190 T500 190 T600 190 T700 190 T800 190 T900 190 T1000 190 T1100 190 T1200 190 V300 H0 Z" fill="#0ea5e9"/>
+  <path d="M0 230 Q60 214 120 230 T240 230 T360 230 T480 230 T600 230 T720 230 T840 230 T960 230 T1080 230 T1200 230 V300 H0 Z" fill="#0284c7"/>
+  <path d="M0 268 Q70 254 140 268 T280 268 T420 268 T560 268 T700 268 T840 268 T980 268 T1120 268 T1260 268 V300 H0 Z" fill="#0369a1"/>
+  <g transform="translate(760 108)"><path d="M0 70 L90 70 L76 90 L14 90 Z" fill="#b45309"/><path d="M44 66 V4 L84 62 Z" fill="#fff"/><path d="M38 66 V16 L8 62 Z" fill="#fca5a5"/><path d="M44 4 L58 10 L44 16 Z" fill="#ef4444"/></g>
+  <g fill="#fff" opacity=".7"><circle cx="300" cy="215" r="4"/><circle cx="318" cy="200" r="3"/><circle cx="450" cy="250" r="4"/><circle cx="1060" cy="245" r="3"/><circle cx="1080" cy="228" r="4"/></g>
+  <g transform="translate(180 236)"><ellipse cx="0" cy="0" rx="16" ry="9" fill="#fb923c"/><path d="M14 0 L28 -9 L28 9 Z" fill="#fb923c"/><circle cx="-8" cy="-2" r="2" fill="#1f2937"/></g>
+</svg>

@@ -20,7 +20,9 @@ class User extends Authenticatable
         'is_active',
         'must_change_password',
         'avatar_path',
+        'avatar_preset',
         'banner_path',
+        'banner_preset',
         'tv_bg_path',
         'tv_layout',
         'tv_style',
@@ -50,11 +52,34 @@ class User extends Authenticatable
 
     public function avatarUrl(): ?string
     {
+        if ($this->avatar_preset && in_array($this->avatar_preset, self::avatarKeys(), true)) {
+            return asset("avatars/{$this->avatar_preset}.svg");
+        }
+
+        // Older accounts may still have an uploaded photo.
         return $this->avatar_path ? route("media", [$this, "avatar", "v" => $this->updated_at?->timestamp]) : null;
+    }
+
+    /** Every selectable preset key, like "ghibli/soot". */
+    public static function avatarKeys(): array
+    {
+        $keys = [];
+        foreach (config('avatars') as $group => $set) {
+            foreach (array_keys($set['items']) as $slug) {
+                $keys[] = "{$group}/{$slug}";
+            }
+        }
+
+        return $keys;
     }
 
     public function bannerUrl(): ?string
     {
+        if ($this->banner_preset && array_key_exists($this->banner_preset, config('banners'))) {
+            return asset("banners/{$this->banner_preset}.svg");
+        }
+
+        // Older accounts may still have an uploaded banner.
         return $this->banner_path ? route("media", [$this, "banner", "v" => $this->updated_at?->timestamp]) : null;
     }
 

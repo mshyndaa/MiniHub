@@ -52,6 +52,34 @@ class MediaController extends Controller
         return back()->with('status', ucfirst($kind) === 'Avatar' ? 'Profile photo updated.' : 'Banner updated.');
     }
 
+    /** Pick one of the built-in cartoon avatars. */
+    public function preset(Request $request)
+    {
+        $data = $request->validate(['preset' => ['required', Rule::in(User::avatarKeys())]]);
+        $user = $request->user();
+
+        if ($user->avatar_path) {
+            Storage::disk('local')->delete($user->avatar_path);
+        }
+        $user->update(['avatar_preset' => $data['preset'], 'avatar_path' => null]);
+
+        return back()->with('status', 'Avatar updated.');
+    }
+
+    /** Pick one of the built-in banners. */
+    public function bannerPreset(Request $request)
+    {
+        $data = $request->validate(['preset' => ['required', Rule::in(array_keys(config('banners')))]]);
+        $user = $request->user();
+
+        if ($user->banner_path) {
+            Storage::disk('local')->delete($user->banner_path);
+        }
+        $user->update(['banner_preset' => $data['preset'], 'banner_path' => null]);
+
+        return back()->with('status', 'Banner updated.');
+    }
+
     public function destroy(Request $request, string $kind)
     {
         abort_unless(isset(self::KINDS[$kind]), 404);
@@ -59,6 +87,12 @@ class MediaController extends Controller
         $user = $request->user();
         $column = self::KINDS[$kind];
 
+        if ($kind === 'banner' && $user->banner_preset) {
+            $user->update(['banner_preset' => null]);
+        }
+        if ($kind === 'avatar' && $user->avatar_preset) {
+            $user->update(['avatar_preset' => null]);
+        }
         if ($user->$column) {
             Storage::disk('local')->delete($user->$column);
             $user->update([$column => null]);

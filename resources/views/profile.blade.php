@@ -25,23 +25,48 @@
     @endunless
 
     <div class="absolute bottom-3 right-3 flex gap-2">
-        <form method="POST" action="{{ route('profile.media.update', 'banner') }}" enctype="multipart/form-data" data-upload>
-            @csrf
-            <input type="file" name="image" accept="image/png,image/jpeg,image/webp,image/gif" class="hidden" data-file>
-            <button type="button" data-pick class="cover-btn" title="JPG, PNG, WebP or GIF, max 5 MB"><x-icon name="camera" class="h-4 w-4" /> {{ $user->bannerUrl() ? 'Change' : 'Add' }} banner</button>
-        </form>
+        <button type="button" class="cover-btn" data-banner-open><x-icon name="sparkles" class="h-4 w-4" /> Change banner</button>
         @if ($user->bannerUrl())
-            <form method="POST" action="{{ route('profile.media.destroy', 'banner') }}" onsubmit="return confirm('Remove your banner?')">
+            <form method="POST" action="{{ route('profile.media.destroy', 'banner') }}" onsubmit="return confirm('Go back to the default banner?')">
                 @csrf @method('DELETE')
-                <button class="cover-btn" aria-label="Remove banner"><x-icon name="trash" class="h-4 w-4" /></button>
+                <button class="cover-btn" aria-label="Use the default banner" title="Use the default banner"><x-icon name="trash" class="h-4 w-4" /></button>
             </form>
         @endif
     </div>
 </section>
 
+<dialog class="avatar-dialog" id="banner-dialog">
+    <form method="POST" action="{{ route('profile.banner.preset') }}">
+        @csrf @method('PUT')
+        <div class="mb-4 flex items-center justify-between gap-3">
+            <div>
+                <h2 class="text-xl font-black">Pick your banner</h2>
+                <p class="text-sm opacity-60">Tap one to use it.</p>
+            </div>
+            <button type="button" class="btn btn-soft h-10 w-10 p-0!" data-banner-close aria-label="Close"><x-icon name="x" class="h-4 w-4" /></button>
+        </div>
+        <div class="banner-grid">
+            @foreach (config('banners') as $slug => $name)
+                <button type="submit" name="preset" value="{{ $slug }}" class="banner-opt {{ $user->banner_preset === $slug ? 'banner-opt-on' : '' }}">
+                    <img src="{{ asset("banners/$slug.svg") }}" alt="" loading="lazy">
+                    <span>{{ $name }}</span>
+                </button>
+            @endforeach
+        </div>
+    </form>
+</dialog>
+<script>
+    (function () {
+        var d = document.getElementById('banner-dialog');
+        document.querySelector('[data-banner-open]').addEventListener('click', function () { d.showModal(); });
+        d.querySelector('[data-banner-close]').addEventListener('click', function () { d.close(); });
+        d.addEventListener('click', function (e) { if (e.target === d) d.close(); });
+    })();
+</script>
+
 {{-- Identity --}}
-<div class="relative z-10 -mt-14 flex flex-col items-center gap-4 px-4 text-center sm:flex-row sm:items-start sm:px-8 sm:text-left">
-    <div class="relative shrink-0">
+<div class="pointer-events-none relative z-10 -mt-14 flex flex-col items-center gap-4 px-4 text-center sm:flex-row sm:items-start sm:px-8 sm:text-left">
+    <div class="pointer-events-auto relative shrink-0">
         <div class="profile-avatar">
             @if ($user->avatarUrl())
                 <img src="{{ $user->avatarUrl() }}" alt="" class="h-full w-full object-cover">
@@ -49,13 +74,41 @@
                 {{ mb_strtoupper(mb_substr($user->name, 0, 1)) }}
             @endif
         </div>
-        <form method="POST" action="{{ route('profile.media.update', 'avatar') }}" enctype="multipart/form-data" data-upload>
-            @csrf
-            <input type="file" name="image" accept="image/png,image/jpeg,image/webp,image/gif" class="hidden" data-file>
-            <button type="button" data-pick class="avatar-btn" aria-label="Change profile photo" title="Change photo (JPG, PNG, WebP or GIF, max 5 MB)"><x-icon name="camera" class="h-4 w-4" /></button>
-        </form>
+        <button type="button" class="avatar-btn" data-avatar-open aria-label="Choose your avatar" title="Choose your avatar"><x-icon name="sparkles" class="h-4 w-4" /></button>
+
+        <dialog class="avatar-dialog" id="avatar-dialog">
+            <form method="POST" action="{{ route('profile.avatar.preset') }}">
+                @csrf @method('PUT')
+                <div class="mb-4 flex items-center justify-between gap-3">
+                    <div>
+                        <h2 class="text-xl font-black">Pick your avatar</h2>
+                        <p class="text-sm opacity-60">Tap a character to be them.</p>
+                    </div>
+                    <button type="button" class="btn btn-soft h-10 w-10 p-0!" data-avatar-close aria-label="Close"><x-icon name="x" class="h-4 w-4" /></button>
+                </div>
+                @foreach (config('avatars') as $group => $set)
+                    <p class="avatar-group">{{ $set['label'] }}</p>
+                    <div class="avatar-grid">
+                        @foreach ($set['items'] as $slug => $name)
+                            <button type="submit" name="preset" value="{{ $group }}/{{ $slug }}" class="avatar-opt {{ $user->avatar_preset === "$group/$slug" ? 'avatar-opt-on' : '' }}">
+                                <img src="{{ asset("avatars/$group/$slug.svg") }}" alt="" loading="lazy">
+                                <span>{{ $name }}</span>
+                            </button>
+                        @endforeach
+                    </div>
+                @endforeach
+            </form>
+        </dialog>
+        <script>
+            (function () {
+                var d = document.getElementById('avatar-dialog');
+                document.querySelector('[data-avatar-open]').addEventListener('click', function () { d.showModal(); });
+                d.querySelector('[data-avatar-close]').addEventListener('click', function () { d.close(); });
+                d.addEventListener('click', function (e) { if (e.target === d) d.close(); });
+            })();
+        </script>
     </div>
-    <div class="pb-1 sm:pt-[4.5rem]">
+    <div class="pointer-events-auto pb-1 sm:pt-[4.5rem]">
         <h1 class="text-3xl font-extrabold leading-tight tracking-tight">{{ $user->name }}</h1>
         <div class="mt-2 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
             <span class="inline-flex items-center gap-1.5 rounded-full bg-sky-100 px-3 py-1 text-xs font-bold text-sky-700 dark:bg-sky-500/15 dark:text-sky-300"><x-icon name="mail" class="h-3.5 w-3.5" /> {{ $user->email }}</span>

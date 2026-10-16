@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f472b6"/><stop offset=".55" stop-color="#fdba74"/><stop offset="1" stop-color="#fde68a"/></linearGradient>
+    <radialGradient id="sun"><stop offset="0" stop-color="#fffbe0"/><stop offset=".5" stop-color="#fff1b8" stop-opacity=".7"/><stop offset="1" stop-color="#fff1b8" stop-opacity="0"/></radialGradient>
+    <g id="c" fill="#fff"><circle cx="30" cy="30" r="22"/><circle cx="62" cy="22" r="28"/><circle cx="95" cy="32" r="20"/><rect x="8" y="32" width="108" height="20" rx="10"/></g>
+  </defs>
+  <rect width="1200" height="300" fill="url(#sky)"/>
+  <circle cx="640" cy="215" r="170" fill="url(#sun)"/><circle cx="640" cy="215" r="62" fill="#fffbe0"/>
+  <use href="#c" transform="translate(130 70) scale(1.5)" opacity=".55"/><use href="#c" transform="translate(900 50) scale(1.7)" opacity=".5"/><use href="#c" transform="translate(420 110) scale(1)" opacity=".5"/>
+  <path d="M0 220 Q220 170 460 215 T900 205 T1200 195 V300 H0 Z" fill="#c084fc"/>
+  <path d="M0 255 Q260 215 560 250 T1200 235 V300 H0 Z" fill="#9333ea"/>
+  <path d="M0 285 Q300 262 640 282 T1200 270 V300 H0 Z" fill="#6b21a8"/>
+  <g stroke="#7e22ce" stroke-width="3" fill="none" stroke-linecap="round" opacity=".7"><path d="M300 90 q7 -9 14 0 q7 -9 14 0"/><path d="M340 112 q5 -7 10 0 q5 -7 10 0"/><path d="M1000 120 q6 -8 12 0 q6 -8 12 0"/></g>
+</svg>

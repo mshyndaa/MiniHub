@@ -41,7 +41,8 @@ Route::middleware(['auth', 'active'])->group(function () {
         Route::post('/notifications', [NotificationController::class, 'store'])->middleware('role:admin')->name('notifications.store');
         Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])->middleware('role:admin')->name('notifications.destroy');
         Route::get('/media/{user}/{kind}', [MediaController::class, 'show'])->name('media');
-        Route::post('/profile/{kind}', [MediaController::class, 'update'])->whereIn('kind', ['avatar', 'banner'])->name('profile.media.update');
+        Route::put('/profile/avatar', [MediaController::class, 'preset'])->name('profile.avatar.preset');
+        Route::put('/profile/banner', [MediaController::class, 'bannerPreset'])->name('profile.banner.preset');
         Route::delete('/profile/{kind}', [MediaController::class, 'destroy'])->whereIn('kind', ['avatar', 'banner'])->name('profile.media.destroy');
 
         Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
