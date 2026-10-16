@@ -48,7 +48,14 @@
         // App lock: when enabled on this device, stay locked until a biometric check passes (see resources/js/applock.js).
         (function () {
             var key = window.cjAppLockKey = 'applock:{{ auth()->id() }}', on = false, ok = false;
-            try { on = !!localStorage.getItem(key); ok = sessionStorage.getItem('applock-ok') === '1'; } catch (e) {}
+            try {
+                on = !!localStorage.getItem(key);
+                ok = sessionStorage.getItem('applock-ok') === '1';
+                // A closed/swiped-away app may not fire "hidden", and the OS can restore sessionStorage on relaunch,
+                // so also lock when the last heartbeat is stale (see applock.js).
+                var seen = parseInt(localStorage.getItem(key + ':seen'), 10);
+                if (ok && !(seen && Date.now() - seen < 8000)) { ok = false; sessionStorage.removeItem('applock-ok'); }
+            } catch (e) {}
             if (on && !ok) document.documentElement.classList.add('app-locked');
         })();
     </script>

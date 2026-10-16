@@ -104,6 +104,22 @@ if (key && overlay) {
             tryUnlock();
         }
     });
+    // Heartbeat: if the app is killed without a "hidden" event, the stale timestamp makes the next launch lock
+    // (checked in the layout <head>). Also lock if we were frozen/suspended for a while and then resumed.
+    const seenKey = key + ':seen';
+    let lastBeat = Date.now();
+    const beat = () => {
+        const now = Date.now();
+        if (now - lastBeat > 8000 && !root.classList.contains('app-locked') && document.visibilityState === 'visible') {
+            lock(); tryUnlock();
+        }
+        lastBeat = now;
+        try { localStorage.setItem(seenKey, String(now)); } catch (e) { /* ignore */ }
+    };
+    beat();
+    setInterval(() => { if (document.visibilityState === 'visible') beat(); }, 2000);
+    window.addEventListener('pagehide', () => { try { localStorage.setItem(seenKey, String(Date.now())); } catch (e) { /* ignore */ } });
+
     // Restored from the back/forward cache after the app was left.
     window.addEventListener('pageshow', (e) => { if (e.persisted && !session.ok()) { lock(); tryUnlock(); } });
 
