@@ -63,6 +63,11 @@ class User extends Authenticatable
         return $this->tv_bg_path ? route("media", [$this, "tvbg", "v" => $this->updated_at?->timestamp]) : null;
     }
 
+    public function stockItems(): HasMany
+    {
+        return $this->hasMany(StockItem::class);
+    }
+
     public function roles(): HasMany
     {
         return $this->hasMany(UserRole::class);

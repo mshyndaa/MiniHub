@@ -47,10 +47,11 @@
     @if ($miniApps->isNotEmpty())
         <section class="lg:col-span-3">
             <h2 class="mb-3 px-1 text-sm font-bold uppercase tracking-widest opacity-50">Your mini programs</h2>
-            <div class="stagger grid gap-4 sm:grid-cols-2">
+            @php $single = $miniApps->count() === 1; @endphp
+            <div class="stagger grid gap-4 {{ $single ? '' : 'sm:grid-cols-2' }}">
                 @foreach ($miniApps as $app)
                     @php $stat = $stats[\Illuminate\Support\Str::before($app['route'], '.')] ?? null; @endphp
-                    <a href="{{ route($app['route']) }}" class="app-card app-card-{{ $app['color'] }} group flex flex-col gap-4">
+                    <a href="{{ route($app['route']) }}" class="app-card app-card-{{ $app['color'] }} group flex flex-col gap-4 {{ $single ? 'sm:flex-row sm:items-center sm:gap-6' : '' }}">
                         <div class="flex items-start justify-between gap-3">
                             <span class="app-icon transition-transform group-hover:scale-110 group-hover:-rotate-6"><x-icon :name="$app['symbol']" class="h-7 w-7" /></span>
                             @if ($stat)

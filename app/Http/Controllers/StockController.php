@@ -55,12 +55,14 @@ class StockController extends Controller
             'tile' => ['nullable', 'regex:/^#[0-9a-fA-F]{6}$/'],
             'opacity' => ['nullable', 'integer', 'between:0,100'],
             'overlay' => ['nullable', 'boolean'],
+            'scale' => ['nullable', 'integer', 'between:40,200'],
         ]);
         $request->user()->update(['tv_style' => [
             'text' => $data['text'] ?? null,
             'tile' => $data['tile'] ?? null,
             'opacity' => $data['opacity'] ?? null,
             'overlay' => $data['overlay'] ?? true,
+            'scale' => $data['scale'] ?? null,
         ]]);
 
         return response()->json(['ok' => true]);
@@ -89,22 +91,23 @@ class StockController extends Controller
     public function store(Request $request)
     {
         $data = $this->validated($request);
-        $item = StockItem::create($data + ['sort_order' => (int) StockItem::max('sort_order') + 1]);
+        $mine = $request->user()->stockItems();
+        $item = $mine->create($data + ['sort_order' => (int) $mine->max('sort_order') + 1]);
 
         return back()->with('status', "{$item->name} added.");
     }
 
     public function update(Request $request, int $id)
     {
-        $item = StockItem::findOrFail($id);
+        $item = $request->user()->stockItems()->findOrFail($id);
         $item->update($this->validated($request));
 
         return back()->with('status', "{$item->name} updated.");
     }
 
-    public function destroy(int $id)
+    public function destroy(Request $request, int $id)
     {
-        $item = StockItem::findOrFail($id);
+        $item = $request->user()->stockItems()->findOrFail($id);
         $item->delete();
 
         return back()->with('status', "{$item->name} removed.");
@@ -114,7 +117,7 @@ class StockController extends Controller
     public function adjust(Request $request, int $id): JsonResponse
     {
         $delta = $request->validate(['delta' => ['required', 'integer', 'in:-1,1']])['delta'];
-        $query = StockItem::whereKey(StockItem::findOrFail($id)->id);
+        $query = StockItem::whereKey($request->user()->stockItems()->findOrFail($id)->id);
 
         // Single atomic UPDATE so two clicks at once never lose a count, and stock never goes below 0.
         $delta < 0 ? $query->where('stock', '>', 0)->decrement('stock') : $query->increment('stock');
@@ -136,6 +139,6 @@ class StockController extends Controller
 
     private function items(): array
     {
-        return StockItem::orderBy('sort_order')->orderBy('id')->get(['id', 'name', 'icon', 'stock'])->toArray();
+        return auth()->user()->stockItems()->orderBy('sort_order')->orderBy('id')->get(['id', 'name', 'icon', 'stock'])->toArray();
     }
 }

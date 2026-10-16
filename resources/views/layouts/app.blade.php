@@ -183,7 +183,7 @@
         </div>
     </main>
 @else
-    @unless (request()->routeIs('login'))
+    @unless (request()->routeIs('login') || View::hasSection('no-header'))
     <header class="mx-auto flex max-w-5xl items-center gap-3 px-4 py-4 {{ request()->routeIs('login') ? 'justify-end' : 'justify-between' }}">
         @unless (request()->routeIs('login'))
             <a href="#" class="brand text-xl">

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Stock TV · {{ config('app.name') }}</title>
+    <script src="{{ asset('session-guard.js') }}"></script>
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     <link href="https://fonts.bunny.net/css?family=nunito:700,800,900" rel="stylesheet">
     <script>
@@ -222,28 +223,19 @@
             box-shadow: 0 3vh 8vh -2vh var(--tile-shadow), inset 0 1px 0 var(--tile-hi);
         }
 
-        .tile::before {
-            content: "";
-            position: absolute;
-            inset: -40% -20% auto;
-            height: 80%;
-            background: radial-gradient(closest-side, var(--glow), transparent);
-            opacity: var(--glow-op);
-        }
-
         .tile>* {
             position: relative;
         }
 
         .icon {
-            font-size: 24cqmin;
+            font-size: calc(24cqmin * var(--fs, 1));
             line-height: 1;
             filter: drop-shadow(0 1.5vh 2vh rgba(0, 0, 0, .4));
         }
 
         .name {
             margin-top: 2vh;
-            font-size: 8cqmin;
+            font-size: calc(8cqmin * var(--fs, 1));
             max-width: 100%;
             overflow-wrap: anywhere;
             font-weight: 900;
@@ -254,7 +246,7 @@
 
         .count {
             margin-top: 1vh;
-            font-size: 48cqmin;
+            font-size: calc(48cqmin * var(--fs, 1));
             font-weight: 900;
             line-height: 1;
             font-variant-numeric: tabular-nums;
@@ -423,6 +415,8 @@
     </div>
     <div class="style-panel" id="style-panel">
         <label>Image overlay <input type="checkbox" id="st-overlay" checked></label>
+        <label>Text size <span id="st-fs-val">100%</span></label>
+        <input type="range" id="st-fs" min="40" max="200" value="100">
         <label>Text colour <input type="color" id="st-text" value="#ffffff"></label>
         <label>Tile colour <input type="color" id="st-tile" value="#ffffff"></label>
         <label>Tile opacity <span id="st-op-val">10%</span></label>
@@ -666,6 +660,8 @@
             var stText = document.getElementById('st-text'),
                 stTile = document.getElementById('st-tile'),
                 stOverlay = document.getElementById('st-overlay'),
+                stFs = document.getElementById('st-fs'),
+                stFsVal = document.getElementById('st-fs-val'),
                 stOp = document.getElementById('st-opacity'),
                 stOpVal = document.getElementById('st-op-val'),
                 stPanel = document.getElementById('style-panel'),
@@ -675,6 +671,10 @@
                 var root = document.documentElement.style,
                     cls = document.body.classList;
                 cls.toggle('txt', !!style.text);
+                var fs = style.scale || 100;
+                root.setProperty('--fs', fs / 100);
+                stFs.value = fs;
+                stFsVal.textContent = fs + '%';
                 cls.toggle('no-overlay', style.overlay === false);
                 stOverlay.checked = style.overlay !== false;
                 if (style.text) root.setProperty('--txt', style.text);
@@ -702,7 +702,8 @@
                         text: style.text || null,
                         tile: style.tile || null,
                         opacity: style.opacity === undefined ? null : style.opacity,
-                        overlay: style.overlay !== false
+                        overlay: style.overlay !== false,
+                        scale: style.scale || null
                     }).catch(function() {
                         alert('Could not save the style.');
                     });
@@ -717,6 +718,9 @@
             stOverlay.addEventListener('change', function() {
                 changeStyle('overlay', this.checked);
             });
+            stFs.addEventListener('input', function() {
+                changeStyle('scale', parseInt(this.value, 10));
+            });
             stOp.addEventListener('input', function() {
                 changeStyle('opacity', parseInt(this.value, 10));
             });
@@ -727,6 +731,7 @@
                 api('{{ route('stock.style.reset') }}', 'DELETE').then(function() {
                     style = {};
                     document.documentElement.style.removeProperty('--txt');
+                    document.documentElement.style.removeProperty('--fs');
                     document.documentElement.style.removeProperty('--tile-custom');
                     stText.value = stTile.value = '#ffffff';
                     applyStyle();

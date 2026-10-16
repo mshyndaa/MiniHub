@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Spin Wheel TV · {{ config('app.name') }}</title>
+    <script src="{{ asset('session-guard.js') }}"></script>
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     <link href="https://fonts.bunny.net/css?family=nunito:700,800,900" rel="stylesheet">
     <style>

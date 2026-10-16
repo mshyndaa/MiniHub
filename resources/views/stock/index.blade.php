@@ -68,6 +68,13 @@
             </details>
         </div>
     @endforeach
+    @if (count($items) === 0)
+        <div class="empty-state" style="grid-column: 1 / -1">
+            <div class="stock-emoji">📦</div>
+            <h2 class="mt-3 text-xl font-extrabold">No items yet</h2>
+            <p class="mt-1 text-sm opacity-70">This is your own stock list. Add your first item above to start counting.</p>
+        </div>
+    @endif
 </section>
 
 <script>
